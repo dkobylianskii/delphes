@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 
 project(Delphes)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -DDROP_CGAL")
+execute_process (
+  COMMAND root-config --incdir
+  OUTPUT_VARIABLE ROOT_INC_DIR
+)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -DDROP_CGAL -I${ROOT_INC_DIR}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 
 # Set the runtime path of the libraries by default but allow to switch it off:
@@ -51,6 +56,9 @@ endfunction()
 
 # Declare position of all other externals needed
 set(DelphesExternals_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external)
+
+# Add compile commands
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(classes)
 add_subdirectory(converters)
