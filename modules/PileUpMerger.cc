@@ -119,7 +119,7 @@ void PileUpMerger::Process()
   Double_t dz, dphi, dt, sumpt2, dz0, dt0;
   Int_t numberOfEvents, event, numberOfParticles;
   Long64_t allEntries, entry;
-  Candidate *candidate, *vertex;
+  Candidate *candidate, *vertex, *tmp_candidate;
   DelphesFactory *factory;
 
   const Double_t c_light = 2.99792458E8;
@@ -150,11 +150,21 @@ void PileUpMerger::Process()
 
   while((candidate = static_cast<Candidate *>(fItInputArray->Next())))
   {
-    vx += candidate->Position.X();
-    vy += candidate->Position.Y();
-    z = candidate->Position.Z();
-    t = candidate->Position.T();
-    pt = candidate->Momentum.Pt();
+    tmp_candidate = factory->NewCandidate();
+    tmp_candidate->PID = candidate->PID;
+    tmp_candidate->Status = candidate->Status;
+    tmp_candidate->Charge = candidate->Charge;
+    tmp_candidate->Mass = candidate->Mass;
+    tmp_candidate->Momentum = candidate->Momentum;
+    tmp_candidate->Position = candidate->Position;
+    tmp_candidate->IsPU = candidate->IsPU;
+
+
+    vx += tmp_candidate->Position.X();
+    vy += tmp_candidate->Position.Y();
+    z = tmp_candidate->Position.Z();
+    t = tmp_candidate->Position.T();
+    pt = tmp_candidate->Momentum.Pt();
 
     // take postion and time from first stable particle
     if(dz0 < -999999.0)
@@ -163,18 +173,18 @@ void PileUpMerger::Process()
       dt0 = t;
 
     // cancel any possible offset in position and time the input file
-    candidate->Position.SetZ(z - dz0 + dz);
-    candidate->Position.SetT(t - dt0 + dt);
+    tmp_candidate->Position.SetZ(z - dz0 + dz);
+    tmp_candidate->Position.SetT(t - dt0 + dt);
 
-    candidate->IsPU = 0;
+    tmp_candidate->IsPU = 0;
 
-    fParticleOutputArray->Add(candidate);
+    fParticleOutputArray->Add(tmp_candidate);
 
-    if(TMath::Abs(candidate->Charge) > 1.0E-9)
+    if(TMath::Abs(tmp_candidate->Charge) > 1.0E-9)
     {
       nch++;
       sumpt2 += pt * pt;
-      vertex->AddCandidate(candidate);
+      vertex->AddCandidate(tmp_candidate);
     }
   }
 
