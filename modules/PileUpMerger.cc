@@ -173,8 +173,8 @@ void PileUpMerger::Process()
       dt0 = t;
 
     // cancel any possible offset in position and time the input file
-    tmp_candidate->Position.SetZ(z - dz0 + dz);
-    tmp_candidate->Position.SetT(t - dt0 + dt);
+    // tmp_candidate->Position.SetZ(z - dz0 + dz);
+    // tmp_candidate->Position.SetT(t - dt0 + dt);
 
     tmp_candidate->IsPU = 0;
 
