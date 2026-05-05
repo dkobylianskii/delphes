@@ -154,7 +154,6 @@ void TrackCovariance::Process()
     // uncomment above to return to standard implementation
     //
     ObsTrk track(candidatePosition.Vect(), candidateMomentum.Vect(), candidate->Charge, mass, fGeometry);
-<<<<<<< HEAD
     Int_t MinMeasure = 6;     // minimum number of measurements required
     if(track.GetUmeas() < MinMeasure) continue;
     //
@@ -165,29 +164,6 @@ void TrackCovariance::Process()
 			track.SetScale(fElectronScaleFactor->Eval(candidateMomentum.Pt(), candidateMomentum.Eta(), candidateMomentum.Phi(), candidateMomentum.E(), candidate));
 		}
     else if (TMath::Abs(candidate->PID) == 13)
-		{
-||||||| 1f22114
-
-		// apply rescaling factors to resolution
-    if (TMath::Abs(candidate->PID) == 11)
-		{
-			track.SetScale(fElectronScaleFactor->Eval(candidateMomentum.Pt(), candidateMomentum.Eta(), candidateMomentum.Phi(), candidateMomentum.E(), candidate));
-		}
-    else if (TMath::Abs(candidate->PID) == 13)
-		{
-=======
-    Int_t MinMeasure = 6; // minimum number of measurements required
-    if(track.GetUmeas() < MinMeasure) continue;
-    //
-    // *******************************
-    // apply rescaling factors to resolution
-    if(TMath::Abs(candidate->PID) == 11)
-    {
-      track.SetScale(fElectronScaleFactor->Eval(candidateMomentum.Pt(), candidateMomentum.Eta(), candidateMomentum.Phi(), candidateMomentum.E(), candidate));
-    }
-    else if(TMath::Abs(candidate->PID) == 13)
-    {
->>>>>>> upstream/master
       track.SetScale(fMuonScaleFactor->Eval(candidateMomentum.Pt(), candidateMomentum.Eta(), candidateMomentum.Phi(), candidateMomentum.E(), candidate));
     }
     else
