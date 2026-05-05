@@ -160,11 +160,12 @@ void TrackCovariance::Process()
     // *******************************
 		// apply rescaling factors to resolution
     if (TMath::Abs(candidate->PID) == 11)
-		{
+    {
 			track.SetScale(fElectronScaleFactor->Eval(candidateMomentum.Pt(), candidateMomentum.Eta(), candidateMomentum.Phi(), candidateMomentum.E(), candidate));
-		}
+    }
     else if (TMath::Abs(candidate->PID) == 13)
-      track.SetScale(fMuonScaleFactor->Eval(candidateMomentum.Pt(), candidateMomentum.Eta(), candidateMomentum.Phi(), candidateMomentum.E(), candidate));
+    {
+        track.SetScale(fMuonScaleFactor->Eval(candidateMomentum.Pt(), candidateMomentum.Eta(), candidateMomentum.Phi(), candidateMomentum.E(), candidate));
     }
     else
     {
