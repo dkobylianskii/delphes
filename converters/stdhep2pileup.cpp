@@ -20,7 +20,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <signal.h>
+#include <csignal>
 
 #include "TApplication.h"
 #include "TROOT.h"

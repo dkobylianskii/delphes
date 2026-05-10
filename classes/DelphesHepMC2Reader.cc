@@ -33,7 +33,7 @@
 #include <map>
 #include <vector>
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "TDatabasePDG.h"
 #include "TLorentzVector.h"

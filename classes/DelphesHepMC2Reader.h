@@ -30,7 +30,7 @@
 #include <map>
 #include <vector>
 
-#include <stdio.h>
+#include <cstdio>
 
 class TObjArray;
 class TStopwatch;

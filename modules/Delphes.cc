@@ -52,8 +52,8 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 using namespace std;
 

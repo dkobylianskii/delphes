@@ -27,7 +27,7 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <utility>
 #include <vector>

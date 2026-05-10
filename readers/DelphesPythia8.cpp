@@ -21,7 +21,7 @@
 #include <stdexcept>
 #include <string>
 
-#include <signal.h>
+#include <csignal>
 
 #include "Pythia.h"
 #include "Pythia8Plugins/CombineMatchingInput.h"

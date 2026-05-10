@@ -30,10 +30,10 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <errno.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
+#include <cerrno>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 
 #include "TDatabasePDG.h"
 #include "TLorentzVector.h"
