@@ -408,7 +408,7 @@ int main(int argc, char *argv[])
       nTriedPythia = pythia->info.nTried();
       while(eventCounter < nTriedPythia)
       {
-        while(reader && reader->ReadBlock(factory, allParticleOutputArrayLHEF, stableParticleOutputArrayLHEF, partonOutputArrayLHEF) && !reader->EventReady());
+        if(reader) reader->ReadEvent(factory, allParticleOutputArrayLHEF, stableParticleOutputArrayLHEF, partonOutputArrayLHEF);
         ++eventCounter;
       }
       --eventCounter;

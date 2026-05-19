@@ -93,7 +93,7 @@ bool DelphesLHEFReader::EventReady()
 
 //---------------------------------------------------------------------------
 
-bool DelphesLHEFReader::ReadBlock(DelphesFactory *factory,
+bool DelphesLHEFReader::ReadEvent(DelphesFactory *factory,
   TObjArray *allParticleOutputArray,
   TObjArray *stableParticleOutputArray,
   TObjArray *partonOutputArray)
@@ -102,127 +102,122 @@ bool DelphesLHEFReader::ReadBlock(DelphesFactory *factory,
   char *pch;
   double weight, xsec;
 
-  if(!fgets(fBuffer, kBufferSize, fInputFile)) return kFALSE;
-
-  if(strstr(fBuffer, "<event>"))
+  while(!EventReady())
   {
-    Clear();
-    fEventCounter = 1;
-  }
-  else if(fEventCounter > 0)
-  {
-    DelphesStream bufferStream(fBuffer);
+    if(!fgets(fBuffer, kBufferSize, fInputFile)) return kFALSE;
 
-    rc = bufferStream.ReadInt(fParticleCounter)
-      && bufferStream.ReadInt(fProcessID)
-      && bufferStream.ReadDbl(fWeight)
-      && bufferStream.ReadDbl(fScalePDF)
-      && bufferStream.ReadDbl(fAlphaQED)
-      && bufferStream.ReadDbl(fAlphaQCD);
-
-    if(!rc)
+    if(strstr(fBuffer, "<event>"))
     {
-      cerr << "** ERROR: "
-           << "invalid event format" << endl;
-      return kFALSE;
+      Clear();
+      fEventCounter = 1;
     }
-
-    --fEventCounter;
-  }
-  else if(fParticleCounter > 0)
-  {
-    DelphesStream bufferStream(fBuffer);
-
-    rc = bufferStream.ReadInt(fPID)
-      && bufferStream.ReadInt(fStatus)
-      && bufferStream.ReadInt(fM1)
-      && bufferStream.ReadInt(fM2)
-      && bufferStream.ReadInt(fC1)
-      && bufferStream.ReadInt(fC2)
-      && bufferStream.ReadDbl(fPx)
-      && bufferStream.ReadDbl(fPy)
-      && bufferStream.ReadDbl(fPz)
-      && bufferStream.ReadDbl(fE)
-      && bufferStream.ReadDbl(fMass);
-
-    if(!rc)
+    else if(fEventCounter > 0)
     {
-      cerr << "** ERROR: "
-           << "invalid particle format" << endl;
-      return kFALSE;
+      DelphesStream bufferStream(fBuffer);
+
+      rc = bufferStream.ReadInt(fParticleCounter)
+        && bufferStream.ReadInt(fProcessID)
+        && bufferStream.ReadDbl(fWeight)
+        && bufferStream.ReadDbl(fScalePDF)
+        && bufferStream.ReadDbl(fAlphaQED)
+        && bufferStream.ReadDbl(fAlphaQCD);
+
+      if(!rc)
+      {
+        cerr << "** ERROR: invalid event format" << endl;
+        return kFALSE;
+      }
+
+      --fEventCounter;
     }
-
-    AnalyzeParticle(factory, allParticleOutputArray,
-      stableParticleOutputArray, partonOutputArray);
-
-    --fParticleCounter;
-  }
-  else if(strstr(fBuffer, "<wgt"))
-  {
-    pch = strpbrk(fBuffer, "\"'");
-    if(!pch)
+    else if(fParticleCounter > 0)
     {
-      cerr << "** ERROR: "
-           << "invalid weight format" << endl;
-      return kFALSE;
+      DelphesStream bufferStream(fBuffer);
+
+      rc = bufferStream.ReadInt(fPID)
+        && bufferStream.ReadInt(fStatus)
+        && bufferStream.ReadInt(fM1)
+        && bufferStream.ReadInt(fM2)
+        && bufferStream.ReadInt(fC1)
+        && bufferStream.ReadInt(fC2)
+        && bufferStream.ReadDbl(fPx)
+        && bufferStream.ReadDbl(fPy)
+        && bufferStream.ReadDbl(fPz)
+        && bufferStream.ReadDbl(fE)
+        && bufferStream.ReadDbl(fMass);
+
+      if(!rc)
+      {
+        cerr << "** ERROR: invalid particle format" << endl;
+        return kFALSE;
+      }
+
+      AnalyzeParticle(factory, allParticleOutputArray,
+        stableParticleOutputArray, partonOutputArray);
+
+      --fParticleCounter;
     }
-
-    DelphesStream idStream(pch + 1);
-    rc = idStream.ReadInt(id);
-
-    pch = strchr(fBuffer, '>');
-    if(!pch)
+    else if(strstr(fBuffer, "<wgt"))
     {
-      cerr << "** ERROR: "
-           << "invalid weight format" << endl;
-      return kFALSE;
+      pch = strpbrk(fBuffer, "\"'");
+      if(!pch)
+      {
+        cerr << "** ERROR: invalid weight format" << endl;
+        return kFALSE;
+      }
+
+      DelphesStream idStream(pch + 1);
+      rc = idStream.ReadInt(id);
+
+      pch = strchr(fBuffer, '>');
+      if(!pch)
+      {
+        cerr << "** ERROR: invalid weight format" << endl;
+        return kFALSE;
+      }
+
+      DelphesStream weightStream(pch + 1);
+      rc = weightStream.ReadDbl(weight);
+
+      if(!rc)
+      {
+        cerr << "** ERROR: invalid weight format" << endl;
+        return kFALSE;
+      }
+
+      fWeightList.push_back(make_pair(id, weight));
     }
-
-    DelphesStream weightStream(pch + 1);
-    rc = weightStream.ReadDbl(weight);
-
-    if(!rc)
+    else if(strstr(fBuffer, "<xsecinfo"))
     {
-      cerr << "** ERROR: "
-           << "invalid weight format" << endl;
-      return kFALSE;
-    }
+      pch = strstr(fBuffer, "totxsec");
+      if(!pch)
+      {
+        cerr << "** ERROR: invalid cross section format" << endl;
+        return kFALSE;
+      }
 
-    fWeightList.push_back(make_pair(id, weight));
-  }
-  else if(strstr(fBuffer, "<xsecinfo"))
-  {
-    pch = strstr(fBuffer, "totxsec");
-    if(!pch)
+      pch = strpbrk(pch + 1, "\"'");
+      if(!pch)
+      {
+        cerr << "** ERROR: invalid cross section format" << endl;
+        return kFALSE;
+      }
+
+      DelphesStream xsecStream(pch + 1);
+      rc = xsecStream.ReadDbl(xsec);
+
+      if(!rc)
+      {
+        cerr << "** ERROR: invalid cross section format" << endl;
+        return kFALSE;
+      }
+
+      fCrossSection = xsec;
+    }
+    else if(strstr(fBuffer, "</event>"))
     {
-      cerr << "** ERROR: "
-           << "invalid cross section format" << endl;
-      return kFALSE;
+      fEventReady = kTRUE;
     }
-
-    pch = strpbrk(pch + 1, "\"'");
-    if(!pch)
-    {
-      cerr << "** ERROR: "
-           << "invalid cross section format" << endl;
-      return kFALSE;
-    }
-
-    DelphesStream xsecStream(pch + 1);
-    rc = xsecStream.ReadDbl(xsec);
-
-    if(!rc)
-    {
-      cerr << "** ERROR: "
-           << "invalid cross section format" << endl;
-      return kFALSE;
-    }
-
-    fCrossSection = xsec;
-  }
-  else if(strstr(fBuffer, "</event>"))
-  {
-    fEventReady = kTRUE;
   }
 
   return kTRUE;

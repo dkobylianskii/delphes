@@ -92,49 +92,52 @@ bool DelphesSTDHEPReader::EventReady()
 
 //---------------------------------------------------------------------------
 
-bool DelphesSTDHEPReader::ReadBlock(DelphesFactory *factory,
+bool DelphesSTDHEPReader::ReadEvent(DelphesFactory *factory,
   TObjArray *allParticleOutputArray,
   TObjArray *stableParticleOutputArray,
   TObjArray *partonOutputArray)
 {
-  fReader[0].ReadValue(&fBlockType, 4);
+  while(!EventReady())
+  {
+    fReader[0].ReadValue(&fBlockType, 4);
 
-  if(feof(fInputFile)) return kFALSE;
+    if(feof(fInputFile)) return kFALSE;
 
-  SkipBytes(4);
+    SkipBytes(4);
 
-  if(fBlockType == FILEHEADER)
-  {
-    ReadFileHeader();
-  }
-  else if(fBlockType == EVENTTABLE)
-  {
-    ReadEventTable();
-  }
-  else if(fBlockType == EVENTHEADER)
-  {
-    ReadEventHeader();
-  }
-  else if(fBlockType == MCFIO_STDHEPBEG || fBlockType == MCFIO_STDHEPEND)
-  {
-    ReadSTDCM1();
-  }
-  else if(fBlockType == MCFIO_STDHEP)
-  {
-    ReadSTDHEP();
-    AnalyzeParticles(factory, allParticleOutputArray,
-      stableParticleOutputArray, partonOutputArray);
-  }
-  else if(fBlockType == MCFIO_STDHEP4)
-  {
-    ReadSTDHEP();
-    AnalyzeParticles(factory, allParticleOutputArray,
-      stableParticleOutputArray, partonOutputArray);
-    ReadSTDHEP4();
-  }
-  else
-  {
-    throw runtime_error("Unsupported block type.");
+    if(fBlockType == FILEHEADER)
+    {
+      ReadFileHeader();
+    }
+    else if(fBlockType == EVENTTABLE)
+    {
+      ReadEventTable();
+    }
+    else if(fBlockType == EVENTHEADER)
+    {
+      ReadEventHeader();
+    }
+    else if(fBlockType == MCFIO_STDHEPBEG || fBlockType == MCFIO_STDHEPEND)
+    {
+      ReadSTDCM1();
+    }
+    else if(fBlockType == MCFIO_STDHEP)
+    {
+      ReadSTDHEP();
+      AnalyzeParticles(factory, allParticleOutputArray,
+        stableParticleOutputArray, partonOutputArray);
+    }
+    else if(fBlockType == MCFIO_STDHEP4)
+    {
+      ReadSTDHEP();
+      AnalyzeParticles(factory, allParticleOutputArray,
+        stableParticleOutputArray, partonOutputArray);
+      ReadSTDHEP4();
+    }
+    else
+    {
+      throw runtime_error("Unsupported block type.");
+    }
   }
 
   return kTRUE;

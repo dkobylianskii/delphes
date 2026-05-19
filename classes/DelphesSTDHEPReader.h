@@ -62,7 +62,7 @@ public:
   void Clear();
   bool EventReady();
 
-  bool ReadBlock(DelphesFactory *factory,
+  bool ReadEvent(DelphesFactory *factory,
     TObjArray *allParticleOutputArray,
     TObjArray *stableParticleOutputArray,
     TObjArray *partonOutputArray);
