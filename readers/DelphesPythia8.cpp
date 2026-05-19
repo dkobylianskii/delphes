@@ -66,7 +66,7 @@ void ConvertInput(Long64_t eventCounter, Pythia8::Pythia *pythia,
   Double_t px, py, pz, e, mass;
   Double_t x, y, z, t;
   Double_t x_decay, y_decay, z_decay, t_decay;
-  
+
   // event information
   element = static_cast<HepMCEvent *>(branch->NewEntry());
 
@@ -108,12 +108,12 @@ void ConvertInput(Long64_t eventCounter, Pythia8::Pythia *pythia,
     y = particle.yProd();
     z = particle.zProd();
     t = particle.tProd();
-    
+
     x_decay = particle.xDec();
     y_decay = particle.yDec();
     z_decay = particle.zDec();
     t_decay = particle.tDec();
-    
+
     candidate = factory->NewCandidate();
 
     candidate->PID = pid;
@@ -135,7 +135,7 @@ void ConvertInput(Long64_t eventCounter, Pythia8::Pythia *pythia,
 
     candidate->Position.SetXYZT(x, y, z, t);
     candidate->DecayPosition.SetXYZT(x_decay, y_decay, z_decay, t_decay);
-    
+
     allParticleOutputArray->Add(candidate);
 
     if(!pdgParticle) continue;
@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
   TObjArray *stableParticleOutputArray = 0, *allParticleOutputArray = 0, *partonOutputArray = 0;
   TObjArray *stableParticleOutputArrayLHEF = 0, *allParticleOutputArrayLHEF = 0, *partonOutputArrayLHEF = 0;
   DelphesLHEFReader *reader = 0;
-  Long64_t eventCounter, errorCounter;
+  Long64_t eventCounter, errorCounter, nTriedPythia;
   Long64_t numberOfEvents, timesAllowErrors;
   Bool_t spareFlag1;
   Int_t spareMode1;
@@ -405,12 +405,13 @@ int main(int argc, char *argv[])
       // Advance the LHE reader for events that were tried but failed by Pythia8.
       // Without this synchronization, the LHEF information and reconstructed
       // Delphes branches correspond to different events after a failed generation.
-      int nTriedPythia = pythia->info.nTried();
-      while(nTriedPythia > eventCounter){
+      nTriedPythia = pythia->info.nTried();
+      while(eventCounter < nTriedPythia)
+      {
         while(reader && reader->ReadBlock(factory, allParticleOutputArrayLHEF, stableParticleOutputArrayLHEF, partonOutputArrayLHEF) && !reader->EventReady());
-        eventCounter++;
+        ++eventCounter;
       }
-      eventCounter--;
+      --eventCounter;
 
       readStopWatch.Stop();
 
