@@ -170,20 +170,6 @@ ExRootTask *ExRootTask::NewTask(const char *className, const char *taskName)
 
 //------------------------------------------------------------------------------
 
-const ExRootConfReader::ExRootTaskMap *ExRootTask::GetModules()
-{
-  if(fConfReader)
-  {
-    return fConfReader->GetModules();
-  }
-  else
-  {
-    return 0;
-  }
-}
-
-//------------------------------------------------------------------------------
-
 ExRootConfParam ExRootTask::GetParam(const char *name)
 {
   if(fConfReader)

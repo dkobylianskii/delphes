@@ -43,7 +43,6 @@ public:
   bool GetBool(const char *name, bool defaultValue, int index = -1);
   const char *GetString(const char *name, const char *defaultValue, int index = -1);
   ExRootConfParam GetParam(const char *name);
-  const ExRootConfReader::ExRootTaskMap *GetModules();
 
   void SetFolder(TFolder *folder) { fFolder = folder; }
   void SetConfReader(ExRootConfReader *conf) { fConfReader = conf; }
