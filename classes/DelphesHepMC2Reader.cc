@@ -72,6 +72,31 @@ DelphesHepMC2Reader::~DelphesHepMC2Reader()
 
 //---------------------------------------------------------------------------
 
+void DelphesHepMC2Reader::OpenInputFile(const char *inputFileName)
+{
+  FILE *inputFile;
+  stringstream message;
+
+  inputFile = fopen(inputFileName, "r");
+
+  if(inputFile == NULL)
+  {
+    message << "can't open " << inputFileName;
+    throw runtime_error(message.str());
+  }
+
+  SetInputFile(inputFile);
+}
+
+//---------------------------------------------------------------------------
+
+void DelphesHepMC2Reader::CloseInputFile()
+{
+  if(fInputFile) fclose(fInputFile);
+}
+
+//---------------------------------------------------------------------------
+
 void DelphesHepMC2Reader::SetInputFile(FILE *inputFile)
 {
   fInputFile = inputFile;
@@ -338,8 +363,8 @@ void DelphesHepMC2Reader::AnalyzeEvent(ExRootTreeBranch *branch, long long /*eve
   element->PDF1 = fPDF1;
   element->PDF2 = fPDF2;
 
-  element->ReadTime = readStopWatch->RealTime();
-  element->ProcTime = procStopWatch->RealTime();
+  element->ReadTime = readStopWatch ? readStopWatch->RealTime() : 0;
+  element->ProcTime = procStopWatch ? procStopWatch->RealTime() : 0;
 }
 
 //---------------------------------------------------------------------------

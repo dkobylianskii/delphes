@@ -30,6 +30,8 @@
 #include <cstdint>
 #include <cstdio>
 
+#include "TObject.h"
+
 #include "classes/DelphesXDRReader.h"
 
 class TObjArray;
@@ -39,7 +41,7 @@ class ExRootTreeBranch;
 class DelphesFactory;
 class DelphesXDRReader;
 
-class DelphesSTDHEPReader
+class DelphesSTDHEPReader: public TObject
 {
 public:
   enum STDHEPBlock
@@ -56,6 +58,9 @@ public:
 
   DelphesSTDHEPReader();
   ~DelphesSTDHEPReader();
+
+  void OpenInputFile(const char *inputFileName);
+  void CloseInputFile();
 
   void SetInputFile(FILE *inputFile);
 
@@ -77,7 +82,9 @@ public:
   }
 
   void AnalyzeEvent(ExRootTreeBranch *branch, long long eventNumber,
-    TStopwatch *readStopWatch, TStopwatch *procStopWatch);
+    TStopwatch *readStopWatch = 0, TStopwatch *procStopWatch = 0);
+
+  void AnalyzeWeight(ExRootTreeBranch *branch);
 
 private:
   void AnalyzeParticles(DelphesFactory *factory,
@@ -109,6 +116,8 @@ private:
 
   uint32_t fScaleSize;
   double fScale[10];
+
+  ClassDef(DelphesSTDHEPReader, 1)
 };
 
 #endif // DelphesSTDHEPReader_h

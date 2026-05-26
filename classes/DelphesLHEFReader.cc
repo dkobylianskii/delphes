@@ -69,6 +69,31 @@ DelphesLHEFReader::~DelphesLHEFReader()
 
 //---------------------------------------------------------------------------
 
+void DelphesLHEFReader::OpenInputFile(const char *inputFileName)
+{
+  FILE *inputFile;
+  stringstream message;
+
+  inputFile = fopen(inputFileName, "r");
+
+  if(inputFile == NULL)
+  {
+    message << "can't open " << inputFileName;
+    throw runtime_error(message.str());
+  }
+
+  SetInputFile(inputFile);
+}
+
+//---------------------------------------------------------------------------
+
+void DelphesLHEFReader::CloseInputFile()
+{
+  if(fInputFile) fclose(fInputFile);
+}
+
+//---------------------------------------------------------------------------
+
 void DelphesLHEFReader::SetInputFile(FILE *inputFile)
 {
   fInputFile = inputFile;
@@ -241,8 +266,8 @@ void DelphesLHEFReader::AnalyzeEvent(ExRootTreeBranch *branch, long long eventNu
   element->AlphaQED = fAlphaQED;
   element->AlphaQCD = fAlphaQCD;
 
-  element->ReadTime = readStopWatch->RealTime();
-  element->ProcTime = procStopWatch->RealTime();
+  element->ReadTime = readStopWatch ? readStopWatch->RealTime() : 0;
+  element->ProcTime = procStopWatch ? procStopWatch->RealTime() : 0;
 }
 
 //---------------------------------------------------------------------------

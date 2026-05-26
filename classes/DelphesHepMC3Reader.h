@@ -32,6 +32,8 @@
 
 #include <cstdio>
 
+#include "TObject.h"
+
 class TObjArray;
 class TStopwatch;
 class TDatabasePDG;
@@ -40,11 +42,14 @@ class ExRootTreeBranch;
 class DelphesFactory;
 class Candidate;
 
-class DelphesHepMC3Reader
+class DelphesHepMC3Reader: public TObject
 {
 public:
   DelphesHepMC3Reader();
   ~DelphesHepMC3Reader();
+
+  void OpenInputFile(const char *inputFileName);
+  void CloseInputFile();
 
   void SetInputFile(FILE *inputFile);
 
@@ -66,7 +71,7 @@ public:
   }
 
   void AnalyzeEvent(ExRootTreeBranch *branch, long long eventNumber,
-    TStopwatch *readStopWatch, TStopwatch *procStopWatch);
+    TStopwatch *readStopWatch = 0, TStopwatch *procStopWatch = 0);
 
   void AnalyzeWeight(ExRootTreeBranch *branch);
 
@@ -111,6 +116,8 @@ private:
 
   std::map<int, std::pair<int, int> > fMotherMap;
   std::map<int, std::pair<int, int> > fDaughterMap;
+
+  ClassDef(DelphesHepMC3Reader, 1)
 };
 
 #endif // DelphesHepMC3Reader_h

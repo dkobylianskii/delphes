@@ -32,17 +32,22 @@
 
 #include <cstdio>
 
+#include "TObject.h"
+
 class TObjArray;
 class TStopwatch;
 class TDatabasePDG;
 class ExRootTreeBranch;
 class DelphesFactory;
 
-class DelphesHepMC2Reader
+class DelphesHepMC2Reader: public TObject
 {
 public:
   DelphesHepMC2Reader();
   ~DelphesHepMC2Reader();
+
+  void OpenInputFile(const char *inputFileName);
+  void CloseInputFile();
 
   void SetInputFile(FILE *inputFile);
 
@@ -64,7 +69,7 @@ public:
   }
 
   void AnalyzeEvent(ExRootTreeBranch *branch, long long eventNumber,
-    TStopwatch *readStopWatch, TStopwatch *procStopWatch);
+    TStopwatch *readStopWatch = 0, TStopwatch *procStopWatch = 0);
 
   void AnalyzeWeight(ExRootTreeBranch *branch);
 
@@ -108,6 +113,8 @@ private:
 
   std::map<int, std::pair<int, int> > fMotherMap;
   std::map<int, std::pair<int, int> > fDaughterMap;
+
+  ClassDef(DelphesHepMC2Reader, 1)
 };
 
 #endif // DelphesHepMC2Reader_h

@@ -70,6 +70,31 @@ DelphesSTDHEPReader::~DelphesSTDHEPReader()
 
 //---------------------------------------------------------------------------
 
+void DelphesSTDHEPReader::OpenInputFile(const char *inputFileName)
+{
+  FILE *inputFile;
+  stringstream message;
+
+  inputFile = fopen(inputFileName, "rb");
+
+  if(inputFile == NULL)
+  {
+    message << "can't open " << inputFileName;
+    throw runtime_error(message.str());
+  }
+
+  SetInputFile(inputFile);
+}
+
+//---------------------------------------------------------------------------
+
+void DelphesSTDHEPReader::CloseInputFile()
+{
+  if(fInputFile) fclose(fInputFile);
+}
+
+//---------------------------------------------------------------------------
+
 void DelphesSTDHEPReader::SetInputFile(FILE *inputFile)
 {
   fInputFile = inputFile;
@@ -451,8 +476,14 @@ void DelphesSTDHEPReader::AnalyzeEvent(ExRootTreeBranch *branch, long long /*eve
   element->AlphaQED = fAlphaQED;
   element->AlphaQCD = fAlphaQCD;
 
-  element->ReadTime = readStopWatch->RealTime();
-  element->ProcTime = procStopWatch->RealTime();
+  element->ReadTime = readStopWatch ? readStopWatch->RealTime() : 0;
+  element->ProcTime = procStopWatch ? procStopWatch->RealTime() : 0;
+}
+
+//---------------------------------------------------------------------------
+
+void DelphesSTDHEPReader::AnalyzeWeight(ExRootTreeBranch *branch)
+{
 }
 
 //---------------------------------------------------------------------------
