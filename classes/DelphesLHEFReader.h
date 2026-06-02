@@ -54,6 +54,8 @@ public:
   void Clear();
   bool EventReady();
 
+  void SkipEvent();
+
   bool ReadEvent(DelphesFactory *factory,
     TObjArray *allParticleOutputArray,
     TObjArray *stableParticleOutputArray,

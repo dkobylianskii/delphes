@@ -92,6 +92,9 @@ def delphes():
         event_counter += 1
 
         if lhef_reader:
+            while event_counter < reader.EventNumber():
+                event_counter += 1
+                lhef_reader.SkipEvent()
             lhef_reader.ReadEvent(factory, *lhef_arrays)
 
         if reader.EventReady():

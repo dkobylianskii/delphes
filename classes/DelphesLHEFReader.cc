@@ -118,6 +118,17 @@ bool DelphesLHEFReader::EventReady()
 
 //---------------------------------------------------------------------------
 
+void DelphesLHEFReader::SkipEvent()
+{
+  while(1)
+  {
+    if(!fgets(fBuffer, kBufferSize, fInputFile)) break;
+    if(strstr(fBuffer, "</event>")) break;
+  }
+}
+
+//---------------------------------------------------------------------------
+
 bool DelphesLHEFReader::ReadEvent(DelphesFactory *factory,
   TObjArray *allParticleOutputArray,
   TObjArray *stableParticleOutputArray,

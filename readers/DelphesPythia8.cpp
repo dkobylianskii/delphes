@@ -158,7 +158,15 @@ int main(int argc, char *argv[])
     {
       ++eventCounter;
 
-      if(readLHEF) readerLHEF->ReadEvent(factory, allParticleOutputArrayLHEF, stableParticleOutputArrayLHEF, partonOutputArrayLHEF);
+      if(readLHEF)
+      {
+        while(eventCounter < reader->EventNumber())
+        {
+          ++eventCounter;
+          readerLHEF->SkipEvent();
+        }
+        readerLHEF->ReadEvent(factory, allParticleOutputArrayLHEF, stableParticleOutputArrayLHEF, partonOutputArrayLHEF);
+      }
 
       readStopWatch.Stop();
 

@@ -138,6 +138,13 @@ bool DelphesPythia8Reader::EventReady()
 
 //---------------------------------------------------------------------------
 
+int DelphesPythia8Reader::EventNumber()
+{
+  return fPythia->info.nTried();
+}
+
+//---------------------------------------------------------------------------
+
 /*
 Single-particle gun. The particle must be a colour singlet.
 Input: flavour, energy, direction (theta, phi).
