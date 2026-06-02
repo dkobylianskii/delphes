@@ -1,0 +1,31 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+  "setuptools"
+]
+
+[project]
+dependencies = [
+]
+description = "A framework for fast simulation of a generic collider experiment"
+license = "GPL-3.0-or-later"
+maintainers = [
+  {name = "Pavel Demin"}
+]
+name = "delphes"
+readme = "README.md"
+requires-python = ">=3.10"
+version = "3.6.0"
+
+[project.scripts]
+delphes = "delphes.delphes:main"
+
+[project.urls]
+homepage = "https://delphes.github.io"
+issues = "https://github.com/delphes/delphes/issues"
+source = "https://github.com/delphes/delphes"
+
+[tool.setuptools]
+packages = [
+  "delphes"
+]
