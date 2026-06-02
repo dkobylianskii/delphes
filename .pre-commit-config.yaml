@@ -35,3 +35,5 @@ repos:
         args: [--autofix]
       - id: pretty-format-yaml
         args: [--autofix, --indent, '2', --offset, '2']
+
+exclude: external/.*
