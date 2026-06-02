@@ -3,7 +3,7 @@
 
 /** \class ExRootConfReader
  *
- *  Class handling output ROOT tree
+ *  Class handling configuration data
  *
  *  \author P. Demin - UCL, Louvain-la-Neuve
  *
@@ -42,6 +42,7 @@ public:
   ExRootConfReader();
   ~ExRootConfReader();
 
+  void ReadData(const char *dirName, char *data, int length);
   void ReadFile(const char *fileName, bool isTop = true);
 
   int GetInt(const char *name, int defaultValue, int index = -1);

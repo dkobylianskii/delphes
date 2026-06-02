@@ -1,7 +1,7 @@
 
 /** \class ExRootConfReader
  *
- *  Class handling output ROOT tree
+ *  Class handling configuration data
  *
  *  \author P. Demin - UCL, Louvain-la-Neuve
  *
@@ -41,6 +41,33 @@ ExRootConfReader::ExRootConfReader() :
 ExRootConfReader::~ExRootConfReader()
 {
   Tcl_DeleteInterp(fTclInterp);
+}
+
+//------------------------------------------------------------------------------
+
+void ExRootConfReader::ReadData(const char *dirName, char *data, int length)
+{
+  stringstream message;
+
+  fTopDir = dirName;
+
+  Tcl_Obj *cmdObjPtr = Tcl_NewObj();
+  cmdObjPtr->bytes = data;
+  cmdObjPtr->length = length;
+
+  Tcl_IncrRefCount(cmdObjPtr);
+
+  if(Tcl_EvalObj(fTclInterp, cmdObjPtr) != TCL_OK)
+  {
+    message << "can't read configuration data" << endl;
+    message << Tcl_GetStringResult(fTclInterp);
+    throw runtime_error(message.str());
+  }
+
+  cmdObjPtr->bytes = 0;
+  cmdObjPtr->length = 0;
+
+  Tcl_DecrRefCount(cmdObjPtr);
 }
 
 //------------------------------------------------------------------------------
