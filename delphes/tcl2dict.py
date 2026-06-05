@@ -100,7 +100,6 @@ def optimize_eta_phi_bins(card):
             continue
         new_bins = []
         for phi, group in groupby(batched(module["EtaPhiBins"], 2), key=lambda p: p[1]):
-            phi = len(phi) - 1 if isinstance(phi, list) else phi
             eta_bins = [item for eta, _ in group for item in (eta if isinstance(eta, list) else [eta])]
             new_bins.extend([eta_bins, phi])
         module["EtaPhiBins"] = new_bins
