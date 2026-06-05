@@ -64,9 +64,9 @@ proc format_dict {value} {
     }
 }
 
-proc module {class module body} {
-    namespace eval $module [list set Class $class]
-    uplevel 1 [list namespace eval $module $body]
+proc module {class name body} {
+    namespace eval ::${name} $body
+    set ::${name}::Class $class
 }
 
 interp alias {} add {} lappend
