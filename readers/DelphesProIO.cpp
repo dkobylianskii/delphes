@@ -325,7 +325,7 @@ int main(int argc, char *argv[])
     stableParticleOutputArray = modularDelphes->ExportArray("stableParticles");
     partonOutputArray = modularDelphes->ExportArray("partons");
 
-    modularDelphes->InitTask();
+    modularDelphes->Init();
 
     for(i = 3; i < argc && !interrupted; ++i)
     {
@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
 
       /*
 // this is slow method, but general
-      inputFile->SeekToStart(); 
+      inputFile->SeekToStart();
       int nn=0;
       auto event = new proio::Event();
       while(inputFile->Next(event)){
@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
           allParticleOutputArray, stableParticleOutputArray,
           partonOutputArray, &readStopWatch, &procStopWatch);
 
-        modularDelphes->ProcessTask();
+        modularDelphes->Process();
         procStopWatch.Stop();
 
         treeWriter->Fill();
@@ -417,7 +417,7 @@ int main(int argc, char *argv[])
       delete inputFile;
     }
 
-    modularDelphes->FinishTask();
+    modularDelphes->Finish();
     treeWriter->Write();
 
     cout << "** Exiting..." << endl;

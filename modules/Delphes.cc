@@ -27,80 +27,51 @@
 
 #include "modules/Delphes.h"
 
-#include "classes/DelphesClasses.h"
 #include "classes/DelphesFactory.h"
-#include "classes/DelphesFormula.h"
 
-#include "ExRootAnalysis/ExRootClassifier.h"
 #include "ExRootAnalysis/ExRootConfReader.h"
-#include "ExRootAnalysis/ExRootFilter.h"
-#include "ExRootAnalysis/ExRootResult.h"
 #include "ExRootAnalysis/ExRootTreeWriter.h"
 
-#include "TDatabasePDG.h"
-#include "TFolder.h"
-#include "TFormula.h"
-#include "TLorentzVector.h"
-#include "TMath.h"
-#include "TObjArray.h"
 #include "TROOT.h"
 #include "TRandom3.h"
 #include "TString.h"
 
-#include <algorithm>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-
-#include <cstdio>
-#include <cstring>
 
 using namespace std;
 
 Delphes::Delphes(const char *name)
 {
-  TFolder *folder;
+  fModules = new TList();
+  fModules->SetOwner(kTRUE);
 
-  fFactory = new DelphesFactory("ObjectFactory");
+  fItModules = fModules->MakeIterator();
 
-  folder = new TFolder(name, "");
+  SetArrays(new TList);
+  SetFactory(new DelphesFactory);
 
   SetName(name);
-  SetFolder(folder);
-
-  folder->Add(this);
-  folder->Add(fFactory);
-
-  gROOT->GetListOfBrowsables()->Add(folder);
 }
 
 //------------------------------------------------------------------------------
 
 Delphes::~Delphes()
 {
-  TFolder *folder = GetFolder();
-  if(folder)
-  {
-    gROOT->GetListOfBrowsables()->Remove(folder);
-    folder->Clear();
-    delete folder;
-  }
-  delete fFactory;
+  delete fItModules;
+  delete fModules;
+
+  delete GetArrays();
+  delete GetFactory();
 }
 
 //------------------------------------------------------------------------------
 
 void Delphes::Clear(Option_t * /*option*/)
 {
-  if(fFactory) fFactory->Clear();
-}
-
-//------------------------------------------------------------------------------
-
-void Delphes::SetTreeWriter(ExRootTreeWriter *treeWriter)
-{
-  treeWriter->SetName("TreeWriter");
-  GetFolder()->Add(treeWriter);
+  GetFactory()->Clear();
 }
 
 //------------------------------------------------------------------------------
@@ -108,17 +79,34 @@ void Delphes::SetTreeWriter(ExRootTreeWriter *treeWriter)
 void Delphes::Init()
 {
   stringstream message;
-  ExRootConfReader *confReader = GetConfReader();
-  confReader->SetName("ConfReader");
-  GetFolder()->Add(confReader);
-
+  ExRootConfReader *confReader;
+  ExRootConfParam param;
+  DelphesModule *mod;
   TString cl, name;
-  ExRootTask *task;
+  Long_t i, size;
 
-  ExRootConfParam param = confReader->GetParam("::ExecutionPath");
-  Long_t i, size = param.GetSize();
+  cout << left;
+  cout << setw(30) << "** INFO: initializing module";
+  cout << setw(25) << GetName() << endl;
+
+  confReader = GetConfReader();
+
+  if(!confReader)
+  {
+    message << "can't access configuration reader";
+    throw runtime_error(message.str());
+  }
+
+  if(!GetTreeWriter())
+  {
+    message << "can't access tree writer";
+    throw runtime_error(message.str());
+  }
 
   gRandom->SetSeed(confReader->GetInt("::RandomSeed", 0));
+
+  param = confReader->GetParam("::ExecutionPath");
+  size = param.GetSize();
 
   for(i = 0; i < size; ++i)
   {
@@ -126,12 +114,7 @@ void Delphes::Init()
     cl = confReader->GetString(name + "::Class", "");
     if(cl != "")
     {
-      task = NewTask(cl, name);
-      if(task)
-      {
-        task->SetFolder(GetFolder());
-        Add(task);
-      }
+      AddModule(cl, name);
     }
     else
     {
@@ -140,18 +123,78 @@ void Delphes::Init()
       throw runtime_error(message.str());
     }
   }
+
+  fItModules->Reset();
+  while((mod = static_cast<DelphesModule *>(fItModules->Next())))
+  {
+    cout << left;
+    cout << setw(30) << "** INFO: initializing module";
+    cout << setw(25) << mod->GetName() << endl;
+
+    mod->Init();
+  }
 }
 
 //------------------------------------------------------------------------------
 
 void Delphes::Process()
 {
+  DelphesModule *mod;
+
+  fItModules->Reset();
+  while((mod = static_cast<DelphesModule *>(fItModules->Next())))
+  {
+    mod->Process();
+  }
 }
 
 //------------------------------------------------------------------------------
 
 void Delphes::Finish()
 {
+  DelphesModule *mod;
+
+  fItModules->Reset();
+  while((mod = static_cast<DelphesModule *>(fItModules->Next())))
+  {
+    mod->Finish();
+  }
+
+  fModules->Clear();
+}
+
+//------------------------------------------------------------------------------
+
+void Delphes::AddModule(const char *className, const char *moduleName)
+{
+  stringstream message;
+  DelphesModule *mod;
+  TClass *cl;
+
+  cl = gROOT->GetClass(className);
+
+  if(!cl)
+  {
+    message << "can't find class '" << className << "'";
+    throw runtime_error(message.str());
+  }
+
+  if(!cl->InheritsFrom(DelphesModule::Class()))
+  {
+    message << "module '" << cl->GetName();
+    message << "' does not inherit from DelphesModule";
+    throw runtime_error(message.str());
+  }
+
+  mod = static_cast<DelphesModule *>(cl->New());
+
+  mod->SetName(moduleName);
+  mod->SetArrays(GetArrays());
+  mod->SetConfReader(GetConfReader());
+  mod->SetTreeWriter(GetTreeWriter());
+  mod->SetFactory(GetFactory());
+
+  fModules->Add(mod);
 }
 
 //------------------------------------------------------------------------------

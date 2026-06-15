@@ -27,20 +27,20 @@
  *
  */
 
-#include "ExRootAnalysis/ExRootTask.h"
+#include "TNamed.h"
+
+#include "ExRootAnalysis/ExRootConfReader.h"
 
 class TClass;
-class TObject;
-class TFolder;
-class TClonesArray;
+class TIterator;
+class TList;
 
-class ExRootResult;
 class ExRootTreeBranch;
 class ExRootTreeWriter;
 
 class DelphesFactory;
 
-class DelphesModule: public ExRootTask
+class DelphesModule: public TNamed
 {
 public:
   DelphesModule();
@@ -50,23 +50,34 @@ public:
   virtual void Process();
   virtual void Finish();
 
+  int GetInt(const char *name, int defaultValue, int index = -1);
+  long GetLong(const char *name, long defaultValue, int index = -1);
+  double GetDouble(const char *name, double defaultValue, int index = -1);
+  bool GetBool(const char *name, bool defaultValue, int index = -1);
+  const char *GetString(const char *name, const char *defaultValue, int index = -1);
+  ExRootConfParam GetParam(const char *name);
+
+  TList *GetArrays() const { return fArrays; }
+  ExRootConfReader *GetConfReader() const { return fConfReader; }
+  ExRootTreeWriter *GetTreeWriter() const { return fTreeWriter; }
+  DelphesFactory *GetFactory() const { return fFactory; }
+
+  void SetArrays(TList *arrays) { fArrays = arrays; }
+  void SetConfReader(ExRootConfReader *reader) { fConfReader = reader; }
+  void SetTreeWriter(ExRootTreeWriter *writer) { fTreeWriter = writer; }
+  void SetFactory(DelphesFactory *factory) { fFactory = factory; }
+
   TObjArray *ImportArray(const char *name);
   TObjArray *ExportArray(const char *name);
 
   ExRootTreeBranch *NewBranch(const char *name, TClass *cl);
   void AddInfo(const char *name, Double_t value);
 
-  ExRootResult *GetPlots();
-  DelphesFactory *GetFactory();
-
-protected:
-  ExRootTreeWriter *fTreeWriter;
-  DelphesFactory *fFactory;
-
 private:
-  ExRootResult *fPlots;
-
-  TFolder *fPlotFolder, *fExportFolder;
+  TList *fArrays = nullptr; //!
+  ExRootConfReader *fConfReader = nullptr; //!
+  ExRootTreeWriter *fTreeWriter = nullptr; //!
+  DelphesFactory *fFactory = nullptr; //!
 
   ClassDef(DelphesModule, 1)
 };

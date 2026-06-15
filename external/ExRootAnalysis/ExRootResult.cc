@@ -14,7 +14,6 @@
 #include "TCanvas.h"
 #include "TClass.h"
 #include "TFile.h"
-#include "TFolder.h"
 #include "TH2.h"
 #include "THStack.h"
 #include "TLegend.h"
@@ -37,7 +36,7 @@ static const Color_t kExRootBackgroundColor = 10;
 //------------------------------------------------------------------------------
 
 ExRootResult::ExRootResult() :
-  fCanvas(0), fFolder(0)
+  fCanvas(0)
 {
 }
 
@@ -317,7 +316,7 @@ TH1 *ExRootResult::AddHist1D(const char *name, const char *title,
   fPlotMap[hist] = settings;
 
   HistStyle(hist, kFALSE);
-  if(fFolder) fFolder->Add(hist);
+
   return hist;
 }
 
@@ -341,7 +340,7 @@ TH1 *ExRootResult::AddHist1D(const char *name, const char *title,
   fPlotMap[hist] = settings;
 
   HistStyle(hist, kFALSE);
-  if(fFolder) fFolder->Add(hist);
+
   return hist;
 }
 
@@ -365,7 +364,7 @@ TProfile *ExRootResult::AddProfile(const char *name, const char *title,
   fPlotMap[profile] = settings;
 
   HistStyle(profile, kFALSE);
-  if(fFolder) fFolder->Add(profile);
+
   return profile;
 }
 
@@ -390,7 +389,7 @@ TH2 *ExRootResult::AddHist2D(const char *name, const char *title,
   fPlotMap[hist] = settings;
 
   HistStyle(hist, kFALSE);
-  if(fFolder) fFolder->Add(hist);
+
   return hist;
 }
 
@@ -407,7 +406,6 @@ THStack *ExRootResult::AddHistStack(const char *name, const char *title)
   fPool.insert(stack);
   fPlotMap[stack] = settings;
 
-  if(fFolder) fFolder->Add(stack);
   return stack;
 }
 

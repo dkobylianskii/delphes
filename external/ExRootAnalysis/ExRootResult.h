@@ -16,7 +16,6 @@ class TLegend;
 class TProfile;
 class TPaveText;
 class TObjArray;
-class TFolder;
 
 class ExRootResult
 {
@@ -62,8 +61,6 @@ public:
 
   void PrintPlot(TObject *plot, const char *sufix = "", const char *format = "eps");
 
-  void SetFolder(TFolder *folder) { fFolder = folder; }
-
 private:
   struct PlotSettings
   {
@@ -79,8 +76,6 @@ private:
   std::set<TObject *> fPool; //!
 
   std::map<TObject *, PlotSettings> fPlotMap; //!
-
-  TFolder *fFolder; //!
 };
 
 #endif /* ExRootResult_h */

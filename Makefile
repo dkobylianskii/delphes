@@ -371,8 +371,7 @@ tmp/external/ExRootAnalysis/ExRootAnalysisDict.$(SrcSuf): \
 	external/ExRootAnalysis/ExRootClassifier.h \
 	external/ExRootAnalysis/ExRootFilter.h \
 	external/ExRootAnalysis/ExRootProgressBar.h \
-	external/ExRootAnalysis/ExRootConfReader.h \
-	external/ExRootAnalysis/ExRootTask.h
+	external/ExRootAnalysis/ExRootConfReader.h
 tmp/external/ExRootAnalysis/ExRootAnalysisDict$(PcmSuf): \
 	tmp/external/ExRootAnalysis/ExRootAnalysisDict.$(SrcSuf)
 ExRootAnalysisDict$(PcmSuf): \
@@ -523,9 +522,7 @@ tmp/classes/DelphesModule.$(ObjSuf): \
 	classes/DelphesModule.$(SrcSuf) \
 	classes/DelphesModule.h \
 	classes/DelphesFactory.h \
-	external/ExRootAnalysis/ExRootResult.h \
 	external/ExRootAnalysis/ExRootTreeBranch.h \
-	external/ExRootAnalysis/ExRootTreeReader.h \
 	external/ExRootAnalysis/ExRootTreeWriter.h
 tmp/classes/DelphesPileUpReader.$(ObjSuf): \
 	classes/DelphesPileUpReader.$(SrcSuf) \
@@ -576,10 +573,6 @@ tmp/external/ExRootAnalysis/ExRootResult.$(ObjSuf): \
 	external/ExRootAnalysis/ExRootResult.$(SrcSuf) \
 	external/ExRootAnalysis/ExRootResult.h \
 	external/ExRootAnalysis/ExRootUtilities.h
-tmp/external/ExRootAnalysis/ExRootTask.$(ObjSuf): \
-	external/ExRootAnalysis/ExRootTask.$(SrcSuf) \
-	external/ExRootAnalysis/ExRootTask.h \
-	external/ExRootAnalysis/ExRootConfReader.h
 tmp/external/ExRootAnalysis/ExRootTreeBranch.$(ObjSuf): \
 	external/ExRootAnalysis/ExRootTreeBranch.$(SrcSuf) \
 	external/ExRootAnalysis/ExRootTreeBranch.h
@@ -749,13 +742,8 @@ tmp/modules/DecayFilter.$(ObjSuf): \
 tmp/modules/Delphes.$(ObjSuf): \
 	modules/Delphes.$(SrcSuf) \
 	modules/Delphes.h \
-	classes/DelphesClasses.h \
 	classes/DelphesFactory.h \
-	classes/DelphesFormula.h \
-	external/ExRootAnalysis/ExRootClassifier.h \
 	external/ExRootAnalysis/ExRootConfReader.h \
-	external/ExRootAnalysis/ExRootFilter.h \
-	external/ExRootAnalysis/ExRootResult.h \
 	external/ExRootAnalysis/ExRootTreeWriter.h
 tmp/modules/DenseTrackFilter.$(ObjSuf): \
 	modules/DenseTrackFilter.$(SrcSuf) \
@@ -1196,7 +1184,6 @@ DELPHES_OBJ +=  \
 	tmp/external/ExRootAnalysis/ExRootFilter.$(ObjSuf) \
 	tmp/external/ExRootAnalysis/ExRootProgressBar.$(ObjSuf) \
 	tmp/external/ExRootAnalysis/ExRootResult.$(ObjSuf) \
-	tmp/external/ExRootAnalysis/ExRootTask.$(ObjSuf) \
 	tmp/external/ExRootAnalysis/ExRootTreeBranch.$(ObjSuf) \
 	tmp/external/ExRootAnalysis/ExRootTreeReader.$(ObjSuf) \
 	tmp/external/ExRootAnalysis/ExRootTreeWriter.$(ObjSuf) \
@@ -2002,7 +1989,7 @@ external/fastjet/tools/Filter.hh: \
 	external/fastjet/tools/Transformer.hh
 	@touch $@
 classes/DelphesModule.h: \
-	external/ExRootAnalysis/ExRootTask.h
+	external/ExRootAnalysis/ExRootConfReader.h
 	@touch $@
 modules/AngularSmearing.h: \
 	classes/DelphesModule.h
@@ -2343,9 +2330,6 @@ external/fastjet/plugins/CDFCones/fastjet/CDFJetCluPlugin.hh: \
 external/fastjet/tools/TopTaggerBase.hh: \
 	external/fastjet/internal/base.hh \
 	external/fastjet/tools/Transformer.hh
-	@touch $@
-external/ExRootAnalysis/ExRootTask.h: \
-	external/ExRootAnalysis/ExRootConfReader.h
 	@touch $@
 external/fastjet/tools/JetMedianBackgroundEstimator.hh: \
 	external/fastjet/config.h \

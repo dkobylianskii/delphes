@@ -375,7 +375,7 @@ int main(int argc, char *argv[])
     stableParticleOutputArray = modularDelphes->ExportArray("stableParticles");
     partonOutputArray = modularDelphes->ExportArray("partons");
 
-    modularDelphes->InitTask();
+    modularDelphes->Init();
 
     for(i = 3; i < argc && !interrupted; ++i)
     {
@@ -409,7 +409,7 @@ int main(int argc, char *argv[])
         {
           ConvertInput(event, eventCounter, branchEvent, branchWeight, factory,
             allParticleOutputArray, stableParticleOutputArray, partonOutputArray, firstEvent);
-          modularDelphes->ProcessTask();
+          modularDelphes->Process();
 
           firstEvent = kFALSE;
 
@@ -429,7 +429,7 @@ int main(int argc, char *argv[])
       inputFile->Close();
     }
 
-    modularDelphes->FinishTask();
+    modularDelphes->Finish();
     treeWriter->Write();
 
     cout << "** Exiting..." << endl;

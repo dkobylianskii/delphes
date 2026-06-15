@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
     stableParticleOutputArray = modularDelphes->ExportArray("stableParticles");
     partonOutputArray = modularDelphes->ExportArray("partons");
 
-    modularDelphes->InitTask();
+    modularDelphes->Init();
 
     
     // fastjet definition
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
       ConvertInput(event, factory, allParticleOutputArray, stableParticleOutputArray, partonOutputArray);
       
       // run Delphes reconstruction
-      modularDelphes->ProcessTask();
+      modularDelphes->Process();
 
       inputList.clear();
       inputIterator->Reset();
@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
     }
 
     // Finalization
-    modularDelphes->FinishTask();
+    modularDelphes->Finish();
     delete modularDelphes;
     delete confReader;
     return 0;

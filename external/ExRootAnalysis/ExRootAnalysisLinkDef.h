@@ -17,7 +17,6 @@
 
 #include "ExRootAnalysis/ExRootProgressBar.h"
 #include "ExRootAnalysis/ExRootConfReader.h"
-#include "ExRootAnalysis/ExRootTask.h"
 
 #ifdef __CINT__
 
@@ -35,7 +34,6 @@
 #pragma link C++ class ExRootProgressBar+;
 #pragma link C++ class ExRootConfReader+;
 #pragma link C++ class ExRootConfParam+;
-#pragma link C++ class ExRootTask+;
 
 #pragma link C++ function HistStyle;
 #pragma link C++ function FillChain;

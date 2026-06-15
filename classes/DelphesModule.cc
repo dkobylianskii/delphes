@@ -28,14 +28,9 @@
 
 #include "classes/DelphesFactory.h"
 
-#include "ExRootAnalysis/ExRootResult.h"
 #include "ExRootAnalysis/ExRootTreeBranch.h"
-#include "ExRootAnalysis/ExRootTreeReader.h"
 #include "ExRootAnalysis/ExRootTreeWriter.h"
 
-#include "TClass.h"
-#include "TFolder.h"
-#include "TObjArray.h"
 #include "TROOT.h"
 
 #include <iostream>
@@ -44,9 +39,7 @@
 
 using namespace std;
 
-DelphesModule::DelphesModule() :
-  fTreeWriter(0), fFactory(0), fPlots(0),
-  fPlotFolder(0), fExportFolder(0)
+DelphesModule::DelphesModule()
 {
 }
 
@@ -76,12 +69,54 @@ void DelphesModule::Finish()
 
 //------------------------------------------------------------------------------
 
+ExRootConfParam DelphesModule::GetParam(const char *name)
+{
+  return fConfReader->GetParam(TString(GetName()) + "::" + name);
+}
+
+//------------------------------------------------------------------------------
+
+int DelphesModule::GetInt(const char *name, int defaultValue, int index)
+{
+  return fConfReader->GetInt(TString(GetName()) + "::" + name, defaultValue, index);
+}
+
+//------------------------------------------------------------------------------
+
+long DelphesModule::GetLong(const char *name, long defaultValue, int index)
+{
+  return fConfReader->GetLong(TString(GetName()) + "::" + name, defaultValue, index);
+}
+
+//------------------------------------------------------------------------------
+
+double DelphesModule::GetDouble(const char *name, double defaultValue, int index)
+{
+  return fConfReader->GetDouble(TString(GetName()) + "::" + name, defaultValue, index);
+}
+
+//------------------------------------------------------------------------------
+
+bool DelphesModule::GetBool(const char *name, bool defaultValue, int index)
+{
+  return fConfReader->GetBool(TString(GetName()) + "::" + name, defaultValue, index);
+}
+
+//------------------------------------------------------------------------------
+
+const char *DelphesModule::GetString(const char *name, const char *defaultValue, int index)
+{
+  return fConfReader->GetString(TString(GetName()) + "::" + name, defaultValue, index);
+}
+
+//------------------------------------------------------------------------------
+
 TObjArray *DelphesModule::ImportArray(const char *name)
 {
   stringstream message;
   TObjArray *object;
 
-  object = static_cast<TObjArray *>(GetObject(Form("Export/%s", name), TObjArray::Class()));
+  object = static_cast<TObjArray *>(fArrays->FindObject(name));
   if(!object)
   {
     message << "can't access input list '" << name;
@@ -97,15 +132,11 @@ TObjArray *DelphesModule::ImportArray(const char *name)
 TObjArray *DelphesModule::ExportArray(const char *name)
 {
   TObjArray *array;
-  if(!fExportFolder)
-  {
-    fExportFolder = NewFolder("Export");
-  }
 
   array = GetFactory()->NewPermanentArray();
 
-  array->SetName(name);
-  fExportFolder->Add(array);
+  array->SetName(TString(GetName()) + "/" + name);
+  fArrays->Add(array);
 
   return array;
 }
@@ -114,16 +145,6 @@ TObjArray *DelphesModule::ExportArray(const char *name)
 
 ExRootTreeBranch *DelphesModule::NewBranch(const char *name, TClass *cl)
 {
-  stringstream message;
-  if(!fTreeWriter)
-  {
-    fTreeWriter = static_cast<ExRootTreeWriter *>(GetObject("TreeWriter", ExRootTreeWriter::Class()));
-    if(!fTreeWriter)
-    {
-      message << "can't access access tree writer";
-      throw runtime_error(message.str());
-    }
-  }
   return fTreeWriter->NewBranch(name, cl);
 }
 
@@ -131,44 +152,7 @@ ExRootTreeBranch *DelphesModule::NewBranch(const char *name, TClass *cl)
 
 void DelphesModule::AddInfo(const char *name, Double_t value)
 {
-  stringstream message;
-  if(!fTreeWriter)
-  {
-    fTreeWriter = static_cast<ExRootTreeWriter *>(GetObject("TreeWriter", ExRootTreeWriter::Class()));
-    if(!fTreeWriter)
-    {
-      message << "can't access access tree writer";
-      throw runtime_error(message.str());
-    }
-  }
   fTreeWriter->AddInfo(name, value);
 }
 
 //------------------------------------------------------------------------------
-
-ExRootResult *DelphesModule::GetPlots()
-{
-  if(!fPlots)
-  {
-    fPlots = new ExRootResult();
-    fPlots->SetFolder(GetFolder());
-  }
-  return fPlots;
-}
-
-//------------------------------------------------------------------------------
-
-DelphesFactory *DelphesModule::GetFactory()
-{
-  stringstream message;
-  if(!fFactory)
-  {
-    fFactory = static_cast<DelphesFactory *>(GetObject("ObjectFactory", DelphesFactory::Class()));
-    if(!fFactory)
-    {
-      message << "can't access access object factory";
-      throw runtime_error(message.str());
-    }
-  }
-  return fFactory;
-}

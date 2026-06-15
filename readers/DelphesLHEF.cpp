@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 
     reader = new DelphesLHEFReader;
 
-    modularDelphes->InitTask();
+    modularDelphes->Init();
 
     i = 3;
     do
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
         {
           readStopWatch.Stop();
           procStopWatch.Start();
-          modularDelphes->ProcessTask();
+          modularDelphes->Process();
           procStopWatch.Stop();
 
           reader->AnalyzeEvent(branchEvent, eventCounter, &readStopWatch, &procStopWatch);
@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
       ++i;
     } while(i < argc);
 
-    modularDelphes->FinishTask();
+    modularDelphes->Finish();
     treeWriter->Write();
 
     cout << "** Exiting..." << endl;

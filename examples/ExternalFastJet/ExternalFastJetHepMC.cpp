@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 
     reader = new DelphesHepMCReader;
 
-    modularDelphes->InitTask();
+    modularDelphes->Init();
 
     ClusterSequence::print_banner();
 
@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
           {
             
 	    // run delphes reconstruction
-	    modularDelphes->ProcessTask();
+	    modularDelphes->Process();
             
             inputList.clear();
             inputIterator->Reset();
@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
     }
     while(i < argc);
 
-    modularDelphes->FinishTask();
+    modularDelphes->Finish();
 
     cout << "** Exiting..." << endl;
 

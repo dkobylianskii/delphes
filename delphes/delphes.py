@@ -84,7 +84,7 @@ def delphes():
         lhef_arrays = [module.ExportArray(name) for name in ("allParticlesLHEF", "stableParticlesLHEF", "partonsLHEF")]
 
     factory = module.GetFactory()
-    module.InitTask()
+    module.Init()
     progress = ROOT.ExRootProgressBar(-1)
     event_counter = 0
 
@@ -98,7 +98,7 @@ def delphes():
             lhef_reader.ReadEvent(factory, *lhef_arrays)
 
         if reader.EventReady():
-            module.ProcessTask()
+            module.Process()
 
             reader.AnalyzeEvent(branch_event, event_counter)
             reader.AnalyzeWeight(branch_weight)
@@ -122,7 +122,7 @@ def delphes():
     if lhef_reader:
         lhef_reader.CloseInputFile()
 
-    module.FinishTask()
+    module.Finish()
     writer.Write()
 
 

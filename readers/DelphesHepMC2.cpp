@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 
     reader = new DelphesHepMC2Reader;
 
-    modularDelphes->InitTask();
+    modularDelphes->Init();
 
     i = 3;
     do
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
         if(eventCounter > skipEvents)
         {
           procStopWatch.Start();
-          modularDelphes->ProcessTask();
+          modularDelphes->Process();
           procStopWatch.Stop();
 
           reader->AnalyzeEvent(branchEvent, eventCounter, &readStopWatch, &procStopWatch);
@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
       ++i;
     } while(i < argc);
 
-    modularDelphes->FinishTask();
+    modularDelphes->Finish();
     treeWriter->Write();
 
     cout << "** Exiting..." << endl;

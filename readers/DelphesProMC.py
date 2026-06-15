@@ -168,7 +168,7 @@ allParticleOutputArray = modularDelphes.ExportArray("allParticles")
 stableParticleOutputArray = modularDelphes.ExportArray("stableParticles")
 partonOutputArray = modularDelphes.ExportArray("partons")
 
-modularDelphes.InitTask()
+modularDelphes.Init()
 
 for fileName in sys.argv[3:]:
     print("** Reading", fileName)
@@ -202,7 +202,7 @@ for fileName in sys.argv[3:]:
 
             ConvertInput(zf.read(name), momentumUnit, lengthUnit, branchEvent, factory, allParticleOutputArray, stableParticleOutputArray, partonOutputArray)
 
-            modularDelphes.ProcessTask()
+            modularDelphes.Process()
 
             treeWriter.Fill()
 
@@ -213,7 +213,7 @@ for fileName in sys.argv[3:]:
         progressBar.Update(eventCounter, eventCounter, ROOT.kTRUE)
         progressBar.Finish()
 
-modularDelphes.FinishTask()
+modularDelphes.Finish()
 treeWriter.Write()
 
 del treeWriter

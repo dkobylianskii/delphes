@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
       partonOutputArrayLHEF = modularDelphes->ExportArray("partonsLHEF");
     }
 
-    modularDelphes->InitTask();
+    modularDelphes->Init();
 
     ExRootProgressBar progressBar(-1);
 
@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
       {
         procStopWatch.Start();
 
-        modularDelphes->ProcessTask();
+        modularDelphes->Process();
         procStopWatch.Stop();
 
         reader->AnalyzeEvent(branchEvent, eventCounter, &readStopWatch, &procStopWatch);
@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
     progressBar.Update(eventCounter, eventCounter, kTRUE);
     progressBar.Finish();
 
-    modularDelphes->FinishTask();
+    modularDelphes->Finish();
     treeWriter->Write();
 
     cout << "** Exiting..." << endl;
