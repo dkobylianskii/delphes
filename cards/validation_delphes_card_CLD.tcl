@@ -1,4 +1,4 @@
-source delphes_card_CLD.tcl
+source delphes_card_FCCeeDetWithSiTracking.tcl
 
 set ExecutionPath [lreplace $ExecutionPath end end]
 add ExecutionPath CaloJetFinder
