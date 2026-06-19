@@ -22,6 +22,10 @@ jobs:
           make distclean
           make -j 8 HAS_PYTHIA8=true
 
+      - name: Run tests
+        run: |
+          python3 -m pytest tests --ignore=tests/test_cards.py
+
       - name: Build Delphes using cmake
         run: |
           rm -rf build
