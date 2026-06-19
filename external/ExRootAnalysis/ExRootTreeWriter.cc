@@ -55,7 +55,7 @@ ExRootTreeBranch *ExRootTreeWriter::NewBranch(const char *name, TClass *cl)
 void ExRootTreeWriter::AddInfo(const char *name, Double_t value)
 {
   if(!fTree) fTree = NewTree();
-  fTree->GetUserInfo()->Add(new TParameter<Double_t>(name, value));
+  if(fTree) fTree->GetUserInfo()->Add(new TParameter<Double_t>(name, value));
 }
 
 //------------------------------------------------------------------------------
