@@ -113,13 +113,13 @@ module ParticlePropagator ParticlePropagator {
   set MuonOutputArray muons
 
   # inner radius of the solenoid, in m
-  set Radius $R
+  set Radius $::R
 
   # half-length: z of the solenoid, in m
-  set HalfLength $HL
+  set HalfLength $::HL
 
   # magnetic field, in T
-  set Bz $B
+  set Bz $::B
 }
 
 ####################################
@@ -200,7 +200,7 @@ module TrackCovariance TrackSmearing {
     set NMinHits 6
 
     ## magnetic field
-    set Bz $B
+    set Bz $::B
 
     ## scale factors
     set ElectronScaleFactor  {1.25}
@@ -382,13 +382,13 @@ module ClusterCounting ClusterCounting {
   add InputArray TrackSmearing/tracks
   set OutputArray tracks
 
-  set Bz $B
+  set Bz $::B
 
   ## check that these are consistent with DCHCANI/DCHNANO parameters in TrackCovariance module
-  set Rmin $DCHRMIN
-  set Rmax $DCHRMAX
-  set Zmin $DCHZMIN
-  set Zmax $DCHZMAX
+  set Rmin $::DCHRMIN
+  set Rmax $::DCHRMAX
+  set Zmin $::DCHZMIN
+  set Zmax $::DCHZMAX
 
   # gas mix option:
   # 0:  Helium 90% - Isobutane 10%
@@ -451,7 +451,7 @@ module Merger TrackMerger {
 module Efficiency ForwardLooperTracks  {
   set InputArray TrackMerger/tracks
   set OutputArray tracks
-  set UseMomentumVector False
+  set UseMomentumVector false
 
   ## select looping tracks that end up in position |eta| > 3.142 (lost by calo)
   set EfficiencyFormula {
@@ -998,5 +998,5 @@ module TreeWriter TreeWriter {
     add Branch FastJetFinderDurhamN2/jets JetDurhamN2 Jet
 
     # add Info InfoName InfoValue
-    add Info Bz $B
+    add Info Bz $::B
 }
