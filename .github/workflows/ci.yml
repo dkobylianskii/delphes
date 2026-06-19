@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        container: ["delphes/ubuntu:24.04", "delphes/fedora:42"]
+        container: ["delphes/alma:8", "delphes/fedora:44"]
 
     container:
       image: ${{ matrix.container }}
