@@ -68,7 +68,7 @@ def compare_particles(arrays_a, arrays_b, array_index):
             assert a[key] == pytest.approx(b[key], rel=1e-6), f"particle {i}: {key} {a[key]} != {b[key]}"
 
 
-@pytest.mark.parametrize("a,b", combinations(data_info, 2), ids=lambda p: p[0])
+@pytest.mark.parametrize("a,b", list(combinations(data_info, 2)), ids=lambda p: p[0])
 def test_reader_consistency(a, b, load_delphes):
     arrays_a = run_reader(a, load_delphes)
     arrays_b = run_reader(b, load_delphes)
