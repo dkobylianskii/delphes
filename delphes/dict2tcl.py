@@ -27,4 +27,6 @@ def dict2tcl(value, level=0):
         if lines:
             return SPACE_RE.sub("", lines[0])
         return "{}"
+    if isinstance(value, bool):
+        return str(value).lower()
     return str(value)
