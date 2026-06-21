@@ -622,14 +622,14 @@ vector<Candidate *> VertexFinderDA4D::vertices()
                                    0,0,0,crappy_error_guess);*/
     //TransientVertex v(pos, time, dummyErrorWithTime, vertexTracks, 5);
 
-    candidate->ClusterIndex = clusterIndex++;
-    ;
+    candidate->ClusterIndex = clusterIndex;
+
     candidate->Position.SetXYZT(0.0, 0.0, z * 10.0, time * c_light);
 
     // TBC - fill error later ...
     candidate->PositionError.SetXYZT(0.0, 0.0, 0.0, crappy_error_guess * c_light);
 
-    clusterIndex++;
+    ++clusterIndex;
     clusters.push_back(candidate);
   }
 
