@@ -122,6 +122,7 @@ void LLPFilter::Init()
 void LLPFilter::Finish()
 {
   delete fItInputArray;
+  delete fItParticleInputArray;
 }
 
 //------------------------------------------------------------------------------
