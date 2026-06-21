@@ -64,6 +64,8 @@ PhotonConversions::PhotonConversions()
 
 PhotonConversions::~PhotonConversions()
 {
+  delete fDecayXsec;
+  delete fConversionMap;
 }
 
 //------------------------------------------------------------------------------
