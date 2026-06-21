@@ -99,7 +99,7 @@ private:
   Double_t fSpareParm1 = 0.0;
   Double_t fSpareParm2 = 0.0;
 
-  bool fEventReady;
+  bool fEventReady = false;
 
   ClassDef(DelphesPythia8Reader, 1)
 };
