@@ -417,9 +417,6 @@ void FastJetFinder::Process()
   }
 
   // loop over all jets and export them
-  detaMax = 0.0;
-  dphiMax = 0.0;
-
   for(itOutputList = outputList.begin(); itOutputList != outputList.end(); ++itOutputList)
   {
     jet = *itOutputList;
@@ -431,6 +428,9 @@ void FastJetFinder::Process()
     if(fAreaDefinition) area = itOutputList->area_4vector();
 
     candidate = factory->NewCandidate();
+
+    detaMax = 0.0;
+    dphiMax = 0.0;
 
     time = 0.0;
     timeWeight = 0.0;
