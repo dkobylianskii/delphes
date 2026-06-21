@@ -45,6 +45,9 @@ private:
   Double_t fD0CutOff;
   Double_t fDtCutOff; // for when the beamspot has time
 
+  TObjArray *fClusterArray = nullptr;
+  TIterator *fItClusterArray = nullptr;
+
   TObjArray *fInputArray = nullptr;
   TIterator *fItInputArray = nullptr;
 

@@ -96,12 +96,16 @@ VertexFinderDA4D::VertexFinderDA4D() :
   fUseTc(0), fBetaMax(0), fBetaStop(0), fCoolingFactor(0),
   fMaxIterations(0), fDzCutOff(0), fD0CutOff(0), fDtCutOff(0)
 {
+  fClusterArray = new TObjArray;
+  fItClusterArray = fClusterArray->MakeIterator();
 }
 
 //------------------------------------------------------------------------------
 
 VertexFinderDA4D::~VertexFinderDA4D()
 {
+  delete fClusterArray;
+  delete fItClusterArray;
 }
 
 //------------------------------------------------------------------------------
@@ -147,9 +151,6 @@ void VertexFinderDA4D::Finish()
 void VertexFinderDA4D::Process()
 {
   Candidate *candidate, *track;
-  TObjArray *ClusterArray;
-  ClusterArray = new TObjArray;
-  TIterator *ItClusterArray;
   Int_t ivtx = 0;
 
   fInputArray->Sort();
@@ -171,17 +172,17 @@ void VertexFinderDA4D::Process()
   }
 
   // clusterize tracks in Z
-  clusterize(*fInputArray, *ClusterArray);
+  fClusterArray->Clear();
+  clusterize(*fInputArray, *fClusterArray);
 
   if(fVerbose)
   {
-    std::cout << " clustering returned  " << ClusterArray->GetEntriesFast() << " clusters  from " << fInputArray->GetEntriesFast() << " selected tracks" << std::endl;
+    std::cout << " clustering returned  " << fClusterArray->GetEntriesFast() << " clusters  from " << fInputArray->GetEntriesFast() << " selected tracks" << std::endl;
   }
 
-  //loop over vertex candidates
-  ItClusterArray = ClusterArray->MakeIterator();
-  ItClusterArray->Reset();
-  while((candidate = static_cast<Candidate *>(ItClusterArray->Next())))
+  // loop over vertex candidates
+  fItClusterArray->Reset();
+  while((candidate = static_cast<Candidate *>(fItClusterArray->Next())))
   {
 
     double meantime = 0.;
@@ -271,7 +272,7 @@ void VertexFinderDA4D::Process()
 
   if(fVerbose)
   {
-    std::cout << "PrimaryVertexProducerAlgorithm::vertices candidates =" << ClusterArray->GetEntriesFast() << std::endl;
+    std::cout << "PrimaryVertexProduceClusterArrayrAlgorithm::vertices candidates =" << fClusterArray->GetEntriesFast() << std::endl;
   }
 
   //TBC maybe this can be done later
@@ -281,7 +282,6 @@ void VertexFinderDA4D::Process()
     }
      */
 
-  delete ClusterArray;
 }
 
 //------------------------------------------------------------------------------
