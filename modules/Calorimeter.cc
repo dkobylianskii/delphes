@@ -669,7 +669,6 @@ void Calorimeter::FinalizeTower()
       mother = track;
       track = static_cast<Candidate *>(track->Clone());
       track->AddCandidate(mother);
-      track->Momentum *= rescaleFactor;
       track->Momentum.SetPtEtaPhiM(track->Momentum.Pt() * rescaleFactor, track->Momentum.Eta(), track->Momentum.Phi(), track->Momentum.M());
 
       fEFlowTrackOutputArray->Add(track);
