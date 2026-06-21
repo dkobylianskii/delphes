@@ -99,8 +99,6 @@ void PhotonConversions::Init()
 void PhotonConversions::Finish()
 {
   delete fItInputArray;
-  delete fDecayXsec;
-  delete fConversionMap;
 }
 
 //------------------------------------------------------------------------------
