@@ -265,7 +265,7 @@ void RunPUPPI::Process()
   // Loop on final particles
   for(std::vector<PseudoJet>::iterator it = puppiParticles.begin(); it != puppiParticles.end(); it++)
   {
-    if(it->user_index() <= int(InputParticles.size()))
+    if(it->user_index() < int(InputParticles.size()))
     {
       candidate = static_cast<Candidate *>(InputParticles.at(it->user_index())->Clone());
       candidate->Momentum.SetPxPyPzE(it->px(), it->py(), it->pz(), it->e());
