@@ -65,7 +65,7 @@ DelphesSTDHEPReader::DelphesSTDHEPReader() :
 
 DelphesSTDHEPReader::~DelphesSTDHEPReader()
 {
-  if(fBuffer) delete fBuffer;
+  if(fBuffer) delete[] fBuffer;
   CloseInputFile();
 }
 
