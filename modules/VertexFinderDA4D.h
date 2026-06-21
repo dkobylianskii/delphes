@@ -34,11 +34,11 @@ private:
   Bool_t fVerbose;
   Double_t fMinPT;
 
-  Float_t fVertexSpaceSize;
-  Float_t fVertexTimeSize;
+  Double_t fVertexSpaceSize;
+  Double_t fVertexTimeSize;
   Bool_t fUseTc;
-  Float_t fBetaMax;
-  Float_t fBetaStop;
+  Double_t fBetaMax;
+  Double_t fBetaStop;
   Double_t fCoolingFactor;
   Int_t fMaxIterations;
   Double_t fDzCutOff;
