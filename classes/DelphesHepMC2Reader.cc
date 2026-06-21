@@ -215,11 +215,11 @@ bool DelphesHepMC2Reader::ReadEvent(DelphesFactory *factory,
         fMomentumCoefficient = 0.001;
       }
 
-      if(strncmp(positionUnit, "MM", 3) == 0)
+      if(strncmp(positionUnit, "MM", 2) == 0)
       {
         fPositionCoefficient = 1.0;
       }
-      else if(strncmp(positionUnit, "CM", 3) == 0)
+      else if(strncmp(positionUnit, "CM", 2) == 0)
       {
         fPositionCoefficient = 10.0;
       }
