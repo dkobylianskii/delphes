@@ -115,7 +115,7 @@ void PileUpMergerPythia8::Process()
 {
   TDatabasePDG *pdg = TDatabasePDG::Instance();
   TParticlePDG *pdgParticle;
-  Int_t pid, status;
+  Int_t pid, status, vn;
   Float_t x, y, z, t, vx, vy;
   Float_t px, py, pz, e;
   Double_t dz, dphi, dt;
@@ -189,6 +189,7 @@ void PileUpMergerPythia8::Process()
 
     vx = 0.0;
     vy = 0.0;
+    vn = 0;
     numberOfParticles = fPythia->event.size();
     for(i = 1; i < numberOfParticles; ++i)
     {
@@ -231,14 +232,15 @@ void PileUpMergerPythia8::Process()
 
       vx += candidate->Position.X();
       vy += candidate->Position.Y();
+      ++vn;
 
       fParticleOutputArray->Add(candidate);
     }
 
-    if(numberOfParticles > 0)
+    if(vn > 0)
     {
-      vx /= numberOfParticles;
-      vy /= numberOfParticles;
+      vx /= vn;
+      vy /= vn;
     }
 
     vertex = factory->NewCandidate();
