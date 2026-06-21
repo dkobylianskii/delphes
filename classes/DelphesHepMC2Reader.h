@@ -82,6 +82,7 @@ private:
   void FinalizeParticles(TObjArray *allParticleOutputArray);
 
   FILE *fInputFile;
+  bool fIsOwner;
 
   char *fBuffer;
 

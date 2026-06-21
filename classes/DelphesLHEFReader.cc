@@ -51,7 +51,7 @@ static const int kBufferSize = 16384;
 //---------------------------------------------------------------------------
 
 DelphesLHEFReader::DelphesLHEFReader() :
-  fInputFile(0), fBuffer(0), fPDG(0),
+  fInputFile(0), fIsOwner(false), fBuffer(0), fPDG(0),
   fEventReady(kFALSE), fEventCounter(-1), fParticleCounter(-1), fCrossSection(1)
 
 {
@@ -65,6 +65,7 @@ DelphesLHEFReader::DelphesLHEFReader() :
 DelphesLHEFReader::~DelphesLHEFReader()
 {
   if(fBuffer) delete[] fBuffer;
+  CloseInputFile();
 }
 
 //---------------------------------------------------------------------------
@@ -83,13 +84,19 @@ void DelphesLHEFReader::OpenInputFile(const char *inputFileName)
   }
 
   SetInputFile(inputFile);
+  fIsOwner = true;
 }
 
 //---------------------------------------------------------------------------
 
 void DelphesLHEFReader::CloseInputFile()
 {
-  if(fInputFile) fclose(fInputFile);
+  if(fInputFile && fIsOwner)
+  {
+    fclose(fInputFile);
+    fInputFile = 0;
+    fIsOwner = false;
+  }
 }
 
 //---------------------------------------------------------------------------

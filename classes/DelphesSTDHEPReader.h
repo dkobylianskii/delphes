@@ -103,6 +103,7 @@ private:
   void ReadSTDHEP4();
 
   FILE *fInputFile;
+  bool fIsOwner;
 
   DelphesXDRReader fReader[7];
 

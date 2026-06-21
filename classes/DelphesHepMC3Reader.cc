@@ -54,7 +54,7 @@ static const int kBufferSize = 16384;
 //---------------------------------------------------------------------------
 
 DelphesHepMC3Reader::DelphesHepMC3Reader() :
-  fInputFile(0), fBuffer(0), fPDG(0),
+  fInputFile(0), fIsOwner(false), fBuffer(0), fPDG(0),
   fVertexCounter(-2), fParticleCounter(-1)
 {
   fBuffer = new char[kBufferSize];
@@ -67,6 +67,7 @@ DelphesHepMC3Reader::DelphesHepMC3Reader() :
 DelphesHepMC3Reader::~DelphesHepMC3Reader()
 {
   if(fBuffer) delete[] fBuffer;
+  CloseInputFile();
 }
 
 //---------------------------------------------------------------------------
@@ -85,13 +86,19 @@ void DelphesHepMC3Reader::OpenInputFile(const char *inputFileName)
   }
 
   SetInputFile(inputFile);
+  fIsOwner = true;
 }
 
 //---------------------------------------------------------------------------
 
 void DelphesHepMC3Reader::CloseInputFile()
 {
-  if(fInputFile) fclose(fInputFile);
+  if(fInputFile && fIsOwner)
+  {
+    fclose(fInputFile);
+    fInputFile = 0;
+    fIsOwner = false;
+  }
 }
 
 //---------------------------------------------------------------------------

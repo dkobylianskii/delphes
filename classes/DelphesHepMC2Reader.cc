@@ -54,7 +54,7 @@ static const int kBufferSize = 16384;
 //---------------------------------------------------------------------------
 
 DelphesHepMC2Reader::DelphesHepMC2Reader() :
-  fInputFile(0), fBuffer(0), fPDG(0),
+  fInputFile(0), fIsOwner(false), fBuffer(0), fPDG(0),
   fVertexCounter(-1), fInCounter(-1), fOutCounter(-1),
   fParticleCounter(0)
 {
@@ -68,6 +68,7 @@ DelphesHepMC2Reader::DelphesHepMC2Reader() :
 DelphesHepMC2Reader::~DelphesHepMC2Reader()
 {
   if(fBuffer) delete[] fBuffer;
+  CloseInputFile();
 }
 
 //---------------------------------------------------------------------------
@@ -86,13 +87,19 @@ void DelphesHepMC2Reader::OpenInputFile(const char *inputFileName)
   }
 
   SetInputFile(inputFile);
+  fIsOwner = true;
 }
 
 //---------------------------------------------------------------------------
 
 void DelphesHepMC2Reader::CloseInputFile()
 {
-  if(fInputFile) fclose(fInputFile);
+  if(fInputFile && fIsOwner)
+  {
+    fclose(fInputFile);
+    fInputFile = 0;
+    fIsOwner = false;
+  }
 }
 
 //---------------------------------------------------------------------------

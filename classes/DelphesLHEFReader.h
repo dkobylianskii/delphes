@@ -82,6 +82,7 @@ private:
     TObjArray *partonOutputArray);
 
   FILE *fInputFile;
+  bool fIsOwner;
 
   char *fBuffer;
 

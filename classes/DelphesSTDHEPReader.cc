@@ -54,7 +54,7 @@ static const int kBufferSize = 1000000;
 //---------------------------------------------------------------------------
 
 DelphesSTDHEPReader::DelphesSTDHEPReader() :
-  fInputFile(0), fBuffer(0), fPDG(0), fBlockType(-1)
+  fInputFile(0), fIsOwner(false), fBuffer(0), fPDG(0), fBlockType(-1)
 {
   fBuffer = new uint8_t[kBufferSize * 96 + 24];
 
@@ -66,6 +66,7 @@ DelphesSTDHEPReader::DelphesSTDHEPReader() :
 DelphesSTDHEPReader::~DelphesSTDHEPReader()
 {
   if(fBuffer) delete fBuffer;
+  CloseInputFile();
 }
 
 //---------------------------------------------------------------------------
@@ -84,13 +85,19 @@ void DelphesSTDHEPReader::OpenInputFile(const char *inputFileName)
   }
 
   SetInputFile(inputFile);
+  fIsOwner = true;
 }
 
 //---------------------------------------------------------------------------
 
 void DelphesSTDHEPReader::CloseInputFile()
 {
-  if(fInputFile) fclose(fInputFile);
+  if(fInputFile && fIsOwner)
+  {
+    fclose(fInputFile);
+    fInputFile = 0;
+    fIsOwner = false;
+  }
 }
 
 //---------------------------------------------------------------------------
