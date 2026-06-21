@@ -281,7 +281,6 @@ void VertexFinderDA4D::Process()
       sort(pvs.begin(), pvs.end(), VertexHigherPtSquared());
     }
      */
-
 }
 
 //------------------------------------------------------------------------------
