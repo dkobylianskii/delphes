@@ -131,7 +131,7 @@ void LLPFilter::Process()
 {
 
   Candidate *candidate;
-  Int_t pdgCode;
+  Int_t pdgCode, d1, d2, dn;
   Double_t pt, eta;
   Candidate *tempCandidate;
 
@@ -154,7 +154,12 @@ void LLPFilter::Process()
     if(pt < fPTMin) continue;
     if(fDaughterNumber > 0)
     {
-      if(candidate->D2 - candidate->D1 != fDaughterNumber) continue; //require at least fDaughterNumber daughters
+      d1 = candidate->D1;
+      d2 = candidate->D2;
+      if(d1 < 0) continue;
+      if(d2 < 0) d2 = d1;
+      dn = d1 <= d2 ? d2 - d1 + 1 : 2;
+      if(dn < fDaughterNumber) continue; //require at least fDaughterNumber daughters
     }
     if(find(fPdgCodes.begin(), fPdgCodes.end(), pdgCode) == fPdgCodes.end()) continue; //require pdgID is one of the LLP id
     if(fRequireStatus && (candidate->Status != fStatus)) continue;
