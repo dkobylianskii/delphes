@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -53,14 +54,13 @@ using namespace std;
 
 MomentumSmearing::MomentumSmearing()
 {
-  fFormula = new DelphesFormula;
+  fFormula = make_unique<DelphesFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 MomentumSmearing::~MomentumSmearing()
 {
-  delete fFormula;
 }
 
 //------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void MomentumSmearing::Init()
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "ParticlePropagator/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // switch to compute momentum smearing based on momentum vector eta, phi
   fUseMomentumVector = GetBool("UseMomentumVector", false);
@@ -88,7 +88,6 @@ void MomentumSmearing::Init()
 
 void MomentumSmearing::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

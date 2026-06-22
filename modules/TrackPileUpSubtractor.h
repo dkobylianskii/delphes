@@ -29,7 +29,8 @@
 
 #include "classes/DelphesModule.h"
 
-#include <map>
+#include <memory>
+#include <vector>
 
 class TIterator;
 class TObjArray;
@@ -46,15 +47,21 @@ public:
   void Finish();
 
 private:
-  DelphesFormula *fFormula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fFormula; //!
 
   Double_t fPTMin;
 
-  std::map<TIterator *, TObjArray *> fInputMap; //!
+  struct TEntryStruct
+  {
+    std::unique_ptr<TIterator> iterator;
+    TObjArray *array;
+  };
+
+  std::vector<TEntryStruct> fInputList; //!
 
   ClassDef(TrackPileUpSubtractor, 1)
 
-    TIterator *fItVertexInputArray = nullptr; //!
+    std::unique_ptr<TIterator> fItVertexInputArray; //!
 
   const TObjArray *fVertexInputArray = nullptr; //!
 };

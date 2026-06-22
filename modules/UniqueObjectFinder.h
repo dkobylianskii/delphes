@@ -49,9 +49,15 @@ public:
 private:
   Bool_t fUseUniqueID;
 
-  Bool_t Unique(Candidate *candidate, std::vector<std::pair<TIterator *, TObjArray *> >::iterator itInputMap);
+  struct TEntryStruct
+  {
+    std::unique_ptr<TIterator> iterator;
+    TObjArray *array;
+  };
 
-  std::vector<std::pair<TIterator *, TObjArray *> > fInputMap; //!
+  Bool_t Unique(Candidate *candidate, std::vector<TEntryStruct>::iterator itInputList);
+
+  std::vector<TEntryStruct> fInputList; //!
 
   ClassDef(UniqueObjectFinder, 1)
 };

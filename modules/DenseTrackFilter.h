@@ -30,6 +30,7 @@
 #include "classes/DelphesModule.h"
 
 #include <map>
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -59,11 +60,11 @@ private:
   TBinMap fBinMap; //!
 
   std::vector<Double_t> fEtaBins;
-  std::vector<std::vector<Double_t> *> fPhiBins;
+  std::vector<std::unique_ptr<std::vector<Double_t> > > fPhiBins;
 
   std::vector<Long64_t> fTowerHits;
 
-  TIterator *fItTrackInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItTrackInputArray; //!
 
   const TObjArray *fTrackInputArray = nullptr; //!
   TObjArray *fTrackOutputArray = nullptr; //!

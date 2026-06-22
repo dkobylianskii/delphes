@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -53,16 +54,14 @@ using namespace std;
 
 AngularSmearing::AngularSmearing()
 {
-  fFormulaEta = new DelphesFormula;
-  fFormulaPhi = new DelphesFormula;
+  fFormulaEta = make_unique<DelphesFormula>();
+  fFormulaPhi = make_unique<DelphesFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 AngularSmearing::~AngularSmearing()
 {
-  delete fFormulaEta;
-  delete fFormulaPhi;
 }
 
 //------------------------------------------------------------------------------
@@ -77,7 +76,7 @@ void AngularSmearing::Init()
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "ParticlePropagator/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
 
@@ -88,7 +87,6 @@ void AngularSmearing::Init()
 
 void AngularSmearing::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

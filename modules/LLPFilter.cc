@@ -47,6 +47,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -97,10 +98,10 @@ void LLPFilter::Init()
 
   // import input array
   fInputArray = ImportArray(GetString("InputArray", "Delphes/allParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   fParticleInputArray = ImportArray(GetString("InputArray", "Delphes/allParticles"));
-  fItParticleInputArray = fParticleInputArray->MakeIterator();
+  fItParticleInputArray.reset(fParticleInputArray->MakeIterator());
 
   param = GetParam("PdgCode");
   size = param.GetSize();
@@ -121,8 +122,6 @@ void LLPFilter::Init()
 
 void LLPFilter::Finish()
 {
-  delete fItInputArray;
-  delete fItParticleInputArray;
 }
 
 //------------------------------------------------------------------------------

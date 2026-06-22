@@ -45,6 +45,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -54,14 +55,13 @@ using namespace std;
 
 CscClusterEfficiency::CscClusterEfficiency()
 {
-  fFormula = new DelphesCscClusterFormula;
+  fFormula = make_unique<DelphesCscClusterFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 CscClusterEfficiency::~CscClusterEfficiency()
 {
-  delete fFormula;
 }
 
 //------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void CscClusterEfficiency::Init()
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "ParticlePropagator/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
 
@@ -85,7 +85,6 @@ void CscClusterEfficiency::Init()
 
 void CscClusterEfficiency::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

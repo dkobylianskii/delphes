@@ -17,6 +17,7 @@
 #include "classes/DelphesModule.h"
 
 #include <map>
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -49,18 +50,18 @@ private:
   TBinMap fBinMap; //!
 
   std::vector<Double_t> fEtaBins;
-  std::vector<std::vector<Double_t> *> fPhiBins;
+  std::vector<std::unique_ptr<std::vector<Double_t> > > fPhiBins;
 
   std::vector<Long64_t> fTowerHits;
 
   std::vector<Double_t> fECalFractions;
   std::vector<Double_t> fHCalFractions;
 
-  DelphesFormula *fECalResolutionFormula = nullptr; //!
-  DelphesFormula *fHCalResolutionFormula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fECalResolutionFormula; //!
+  std::unique_ptr<DelphesFormula> fHCalResolutionFormula; //!
 
-  TIterator *fItParticleInputArray = nullptr; //!
-  TIterator *fItTrackInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItParticleInputArray; //!
+  std::unique_ptr<TIterator> fItTrackInputArray; //!
 
   const TObjArray *fParticleInputArray = nullptr; //!
   const TObjArray *fTrackInputArray = nullptr; //!
@@ -71,20 +72,20 @@ private:
   TObjArray *fEFlowTrackOutputArray = nullptr; //!
   TObjArray *fEFlowTowerOutputArray = nullptr; //!
 
-  TObjArray *fTowerECalArray = nullptr; //!
-  TIterator *fItTowerECalArray = nullptr; //!
+  std::unique_ptr<TObjArray> fTowerECalArray; //!
+  std::unique_ptr<TIterator> fItTowerECalArray; //!
 
-  TObjArray *fTowerHCalArray = nullptr; //!
-  TIterator *fItTowerHCalArray = nullptr; //!
+  std::unique_ptr<TObjArray> fTowerHCalArray; //!
+  std::unique_ptr<TIterator> fItTowerHCalArray; //!
 
-  TObjArray *fTowerTrackArray = nullptr; //!
-  TIterator *fItTowerTrackArray = nullptr; //!
+  std::unique_ptr<TObjArray> fTowerTrackArray; //!
+  std::unique_ptr<TIterator> fItTowerTrackArray; //!
 
-  TObjArray *fTowerECalTrackArray = nullptr; //!
-  TIterator *fItTowerECalTrackArray = nullptr; //!
+  std::unique_ptr<TObjArray> fTowerECalTrackArray; //!
+  std::unique_ptr<TIterator> fItTowerECalTrackArray; //!
 
-  TObjArray *fTowerHCalTrackArray = nullptr; //!
-  TIterator *fItTowerHCalTrackArray = nullptr; //!
+  std::unique_ptr<TObjArray> fTowerHCalTrackArray; //!
+  std::unique_ptr<TIterator> fItTowerHCalTrackArray; //!
 
   void FinalizeTower();
   Double_t LogNormal(Double_t mean, Double_t sigma);

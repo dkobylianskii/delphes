@@ -45,6 +45,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -167,7 +168,7 @@ void StatusPidFilter::Init()
 
   // import input array
   fInputArray = ImportArray(GetString("InputArray", "Delphes/allParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
 
@@ -178,7 +179,6 @@ void StatusPidFilter::Init()
 
 void StatusPidFilter::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

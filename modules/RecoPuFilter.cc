@@ -45,6 +45,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -71,7 +72,7 @@ void RecoPuFilter::Init()
 
   // import input array
   fInputArray = ImportArray(GetString("InputArray", "Delphes/allParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
   fOutputArray = ExportArray(GetString("OutputArray", "filteredParticles"));
@@ -81,7 +82,6 @@ void RecoPuFilter::Init()
 
 void RecoPuFilter::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

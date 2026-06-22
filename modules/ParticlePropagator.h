@@ -31,6 +31,7 @@
  */
 
 #include "classes/DelphesModule.h"
+#include <memory>
 
 class TClonesArray;
 class TIterator;
@@ -50,7 +51,7 @@ private:
   Double_t fRadius, fRadius2, fRadiusMax, fHalfLength, fHalfLengthMax;
   Double_t fBz;
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
   const TObjArray *fBeamSpotInputArray = nullptr; //!

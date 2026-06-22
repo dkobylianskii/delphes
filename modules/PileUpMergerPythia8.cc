@@ -47,6 +47,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -56,14 +57,13 @@ using namespace std;
 
 PileUpMergerPythia8::PileUpMergerPythia8()
 {
-  fFunction = new DelphesTF2;
+  fFunction = make_unique<DelphesTF2>();
 }
 
 //------------------------------------------------------------------------------
 
 PileUpMergerPythia8::~PileUpMergerPythia8()
 {
-  delete fFunction;
 }
 
 //------------------------------------------------------------------------------
@@ -86,16 +86,16 @@ void PileUpMergerPythia8::Init()
 
   fPTMin = GetDouble("PTMin", 0.0);
 
-  fFunction->Compile(GetString("VertexDistributionFormula", "0.0"));
+  fFunction->Compile(GetString("VertexD", "0.0"));
   fFunction->SetRange(-fZVertexSpread, -fTVertexSpread, fZVertexSpread, fTVertexSpread);
 
   fileName = GetString("ConfigFile", "MinBias.cmnd");
-  fPythia = new Pythia8::Pythia();
+  fPythia = make_unique<Pythia8::Pythia>();
   fPythia->readFile(fileName);
 
   // import input array
   fInputArray = ImportArray(GetString("InputArray", "Delphes/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output arrays
   fParticleOutputArray = ExportArray(GetString("ParticleOutputArray", "stableParticles"));
@@ -106,7 +106,6 @@ void PileUpMergerPythia8::Init()
 
 void PileUpMergerPythia8::Finish()
 {
-  delete fPythia;
 }
 
 //------------------------------------------------------------------------------

@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -67,8 +68,8 @@ void ConstituentFilter::Init()
 {
   ExRootConfParam param;
   Long_t i, size;
-  const TObjArray *array;
-  TIterator *iterator;
+  TObjArray *array;
+  TEntryStruct entry;
 
   fJetPTMin = GetDouble("JetPTMin", 0.0);
 
@@ -76,22 +77,26 @@ void ConstituentFilter::Init()
 
   param = GetParam("JetInputArray");
   size = param.GetSize();
+
+  fJetList.clear();
   for(i = 0; i < size; ++i)
   {
     array = ImportArray(param[i].GetString());
-    iterator = array->MakeIterator();
-
-    fInputList.push_back(iterator);
+    entry.iterator.reset(array->MakeIterator());
+    entry.array = array;
+    fJetList.push_back(move(entry));
   }
 
   param = GetParam("ConstituentInputArray");
   size = param.GetSize();
+
+  fConstituentList.clear();
   for(i = 0; i < size / 2; ++i)
   {
     array = ImportArray(param[i * 2].GetString());
-    iterator = array->MakeIterator();
-
-    fInputMap[iterator] = ExportArray(param[i * 2 + 1].GetString());
+    entry.iterator.reset(array->MakeIterator());
+    entry.array = ExportArray(param[i * 2 + 1].GetString());
+    fConstituentList.push_back(move(entry));
   }
 }
 
@@ -99,21 +104,6 @@ void ConstituentFilter::Init()
 
 void ConstituentFilter::Finish()
 {
-  map<TIterator *, TObjArray *>::iterator itInputMap;
-  vector<TIterator *>::iterator itInputList;
-  TIterator *iterator;
-
-  for(itInputList = fInputList.begin(); itInputList != fInputList.end(); ++itInputList)
-  {
-    iterator = *itInputList;
-    if(iterator) delete iterator;
-  }
-
-  for(itInputMap = fInputMap.begin(); itInputMap != fInputMap.end(); ++itInputMap)
-  {
-    iterator = itInputMap->first;
-    if(iterator) delete iterator;
-  }
 }
 
 //------------------------------------------------------------------------------
@@ -121,15 +111,14 @@ void ConstituentFilter::Finish()
 void ConstituentFilter::Process()
 {
   Candidate *jet, *constituent;
-  map<TIterator *, TObjArray *>::iterator itInputMap;
-  vector<TIterator *>::iterator itInputList;
+  vector<TEntryStruct>::iterator itList;
   TIterator *iterator;
   TObjArray *array;
 
   // loop over all jet input arrays
-  for(itInputList = fInputList.begin(); itInputList != fInputList.end(); ++itInputList)
+  for(itList = fJetList.begin(); itList != fJetList.end(); ++itList)
   {
-    iterator = *itInputList;
+    iterator = itList->iterator.get();
 
     // loop over all jets
     iterator->Reset();
@@ -149,10 +138,10 @@ void ConstituentFilter::Process()
   }
 
   // loop over all constituent input arrays
-  for(itInputMap = fInputMap.begin(); itInputMap != fInputMap.end(); ++itInputMap)
+  for(itList = fConstituentList.begin(); itList != fConstituentList.end(); ++itList)
   {
-    iterator = itInputMap->first;
-    array = itInputMap->second;
+    iterator = itList->iterator.get();
+    array = itList->array;
 
     // loop over all constituents
     iterator->Reset();

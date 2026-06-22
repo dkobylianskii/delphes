@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -53,14 +54,13 @@ using namespace std;
 
 ExampleModule::ExampleModule()
 {
-  fFormula = new DelphesFormula;
+  fFormula = make_unique<DelphesFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 ExampleModule::~ExampleModule()
 {
-  delete fFormula;
 }
 
 //------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ void ExampleModule::Init()
   // import input array(s)
 
   fInputArray = ImportArray(GetString("InputArray", "FastJetFinder/jets"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array(s)
 
@@ -99,7 +99,6 @@ void ExampleModule::Init()
 
 void ExampleModule::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

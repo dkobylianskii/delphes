@@ -29,6 +29,8 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
+
 class TIterator;
 class TObjArray;
 class DelphesFormula;
@@ -46,9 +48,9 @@ public:
 private:
   Double_t LogNormal(Double_t mean, Double_t sigma);
 
-  DelphesFormula *fFormula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fFormula; //!
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

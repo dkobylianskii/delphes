@@ -33,6 +33,7 @@
 #include "classes/DelphesModule.h"
 
 #include <map>
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -89,7 +90,7 @@ private:
   TBinMap fBinMap; //!
 
   std::vector<Double_t> fEtaBins;
-  std::vector<std::vector<Double_t> *> fPhiBins;
+  std::vector<std::unique_ptr<std::vector<Double_t> > > fPhiBins;
 
   std::vector<Long64_t> fTowerHits;
 
@@ -106,10 +107,10 @@ private:
     return fInsensitiveBinSet.find(std::make_pair(etaBin, phiBin)) != fInsensitiveBinSet.end();
   }
 
-  DelphesFormula *fResolutionFormula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fResolutionFormula; //!
 
-  TIterator *fItParticleInputArray = nullptr; //!
-  TIterator *fItTrackInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItParticleInputArray; //!
+  std::unique_ptr<TIterator> fItTrackInputArray; //!
 
   const TObjArray *fParticleInputArray = nullptr; //!
   const TObjArray *fTrackInputArray = nullptr; //!
@@ -119,8 +120,8 @@ private:
   TObjArray *fEFlowTrackOutputArray = nullptr; //!
   TObjArray *fEFlowTowerOutputArray = nullptr; //!
 
-  TObjArray *fTowerTrackArray = nullptr; //!
-  TIterator *fItTowerTrackArray = nullptr; //!
+  std::unique_ptr<TObjArray> fTowerTrackArray; //!
+  std::unique_ptr<TIterator> fItTowerTrackArray; //!
 
   void FinalizeTower();
   Double_t LogNormal(Double_t mean, Double_t sigma);

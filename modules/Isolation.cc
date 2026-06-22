@@ -47,6 +47,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -80,7 +81,7 @@ Int_t IsolationClassifier::GetCategory(TObject *object)
 
 Isolation::Isolation()
 {
-  fClassifier = new IsolationClassifier;
+  fClassifier = make_unique<IsolationClassifier>();
 }
 
 //------------------------------------------------------------------------------
@@ -113,18 +114,18 @@ void Isolation::Init()
   // import input array(s)
 
   fIsolationInputArray = ImportArray(GetString("IsolationInputArray", "Delphes/partons"));
-  fItIsolationInputArray = fIsolationInputArray->MakeIterator();
+  fItIsolationInputArray.reset(fIsolationInputArray->MakeIterator());
 
-  fFilter = new ExRootFilter(fIsolationInputArray);
+  fFilter = make_unique<ExRootFilter>(fIsolationInputArray);
 
   fCandidateInputArray = ImportArray(GetString("CandidateInputArray", "Calorimeter/electrons"));
-  fItCandidateInputArray = fCandidateInputArray->MakeIterator();
+  fItCandidateInputArray.reset(fCandidateInputArray->MakeIterator());
 
   rhoInputArrayName = GetString("RhoInputArray", "");
   if(rhoInputArrayName[0] != '\0')
   {
     fRhoInputArray = ImportArray(rhoInputArrayName);
-    fItRhoInputArray = fRhoInputArray->MakeIterator();
+    fItRhoInputArray.reset(fRhoInputArray->MakeIterator());
   }
   else
   {
@@ -140,10 +141,6 @@ void Isolation::Init()
 
 void Isolation::Finish()
 {
-  delete fItRhoInputArray;
-  delete fFilter;
-  delete fItCandidateInputArray;
-  delete fItIsolationInputArray;
 }
 
 //------------------------------------------------------------------------------
@@ -160,7 +157,7 @@ void Isolation::Process()
 
   // select isolation objects
   fFilter->Reset();
-  isolationArray = fFilter->GetSubArray(fClassifier, 0);
+  isolationArray = fFilter->GetSubArray(fClassifier.get(), 0);
   TIter itIsolationArray(isolationArray);
 
   // loop over all input jets

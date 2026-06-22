@@ -37,6 +37,7 @@
 #include "TVectorD.h"
 
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 using namespace std;
@@ -45,14 +46,13 @@ using namespace std;
 
 ClusterCounting::ClusterCounting()
 {
-  fTrackUtil = new TrkUtil();
+  fTrackUtil = make_unique<TrkUtil>();
 }
 
 //------------------------------------------------------------------------------
 
 ClusterCounting::~ClusterCounting()
 {
-  delete fTrackUtil;
 }
 
 //------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ void ClusterCounting::Init()
 
   // import input array
   fInputArray = ImportArray(GetString("InputArray", "TrackMerger/tracks"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
   fOutputArray = ExportArray(GetString("OutputArray", "tracks"));
@@ -93,7 +93,6 @@ void ClusterCounting::Init()
 
 void ClusterCounting::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

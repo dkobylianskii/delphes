@@ -29,14 +29,16 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
 #include <vector>
+
+#include "fastjet/JetDefinition.hh"
 
 class TObjArray;
 class TIterator;
 
 namespace fastjet
 {
-class JetDefinition;
 class AreaDefinition;
 class JetMedianBackgroundEstimator;
 namespace contrib
@@ -59,15 +61,15 @@ public:
   void Finish();
 
 private:
-  void *fPlugin = nullptr; //!
-  void *fRecomb = nullptr; //!
+  std::unique_ptr<fastjet::JetDefinition::Plugin> fPlugin; //!
+  std::unique_ptr<fastjet::JetDefinition::Recombiner> fRecomb; //!
 
-  fastjet::contrib::AxesDefinition *fAxesDef = nullptr;
-  fastjet::contrib::MeasureDefinition *fMeasureDef = nullptr;
+  std::unique_ptr<fastjet::contrib::AxesDefinition> fAxesDef; //!
+  std::unique_ptr<fastjet::contrib::MeasureDefinition> fMeasureDef; //!
 
-  fastjet::contrib::NjettinessPlugin *fNjettinessPlugin = nullptr; //!
-  fastjet::contrib::ValenciaPlugin *fValenciaPlugin = nullptr; //!
-  fastjet::JetDefinition *fDefinition = nullptr; //!
+  std::unique_ptr<fastjet::contrib::NjettinessPlugin> fNjettinessPlugin; //!
+  std::unique_ptr<fastjet::contrib::ValenciaPlugin> fValenciaPlugin; //!
+  std::unique_ptr<fastjet::JetDefinition> fDefinition; //!
 
   Int_t fJetAlgorithm;
   Double_t fParameterR;
@@ -122,7 +124,7 @@ private:
 
   // --- FastJet Area method --------
 
-  fastjet::AreaDefinition *fAreaDefinition = nullptr;
+  std::unique_ptr<fastjet::AreaDefinition> fAreaDefinition; //!
   Int_t fAreaAlgorithm;
   Bool_t fComputeRho;
 
@@ -137,17 +139,15 @@ private:
   // -- voronoi areas --
   Double_t fEffectiveRfact;
 
-#if !defined(__CINT__) && !defined(__CLING__)
-  struct TEstimatorStruct
+  struct TEntryStruct
   {
-    fastjet::JetMedianBackgroundEstimator *estimator;
+    std::unique_ptr<fastjet::JetMedianBackgroundEstimator> estimator;
     Double_t etaMin, etaMax;
   };
 
-  std::vector<TEstimatorStruct> fEstimators; //!
-#endif
+  std::vector<TEntryStruct> fEstimators; //!
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

@@ -45,6 +45,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -70,19 +71,17 @@ void TruthVertexFinder::Init()
   fResolution = GetDouble("Resolution", 1E-06); // resolution in meters
   // import input array
   fInputArray = ImportArray(GetString("InputArray", "Delphes/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output arrays
   fVertexOutputArray = ExportArray(GetString("VertexOutputArray", "vertices"));
-  fItOutputArray = fVertexOutputArray->MakeIterator();
+  fItOutputArray.reset(fVertexOutputArray->MakeIterator());
 }
 
 //------------------------------------------------------------------------------
 
 void TruthVertexFinder::Finish()
 {
-  delete fItInputArray;
-  delete fItOutputArray;
 }
 
 //------------------------------------------------------------------------------

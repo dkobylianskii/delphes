@@ -13,6 +13,8 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
+
 class TIterator;
 class TObjArray;
 class DelphesFormula;
@@ -32,34 +34,34 @@ private:
 
   Double_t fBz;
 
-  DelphesFormula *fD0Formula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fD0Formula; //!
   std::string fD0ResolutionFile;
   std::string fD0ResolutionHist;
   Bool_t fUseD0Formula;
 
-  DelphesFormula *fDZFormula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fDZFormula; //!
   std::string fDZResolutionFile;
   std::string fDZResolutionHist;
   Bool_t fUseDZFormula;
 
-  DelphesFormula *fPFormula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fPFormula; //!
   std::string fPResolutionFile;
   std::string fPResolutionHist;
   Bool_t fUsePFormula;
 
-  DelphesFormula *fCtgThetaFormula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fCtgThetaFormula; //!
   std::string fCtgThetaResolutionFile;
   std::string fCtgThetaResolutionHist;
   Bool_t fUseCtgThetaFormula;
 
-  DelphesFormula *fPhiFormula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fPhiFormula; //!
   std::string fPhiResolutionFile;
   std::string fPhiResolutionHist;
   Bool_t fUsePhiFormula;
 
   Bool_t fApplyToPileUp;
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
   const TObjArray *fBeamSpotInputArray = nullptr; //!

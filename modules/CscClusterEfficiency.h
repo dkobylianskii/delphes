@@ -29,6 +29,8 @@
  */
 #include "classes/DelphesModule.h"
 
+#include <memory>
+
 class TIterator;
 class TObjArray;
 class DelphesCscClusterFormula;
@@ -44,9 +46,9 @@ public:
   void Finish();
 
 private:
-  DelphesCscClusterFormula *fFormula = nullptr; //!
+  std::unique_ptr<DelphesCscClusterFormula> fFormula; //!
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -61,7 +62,7 @@ void VertexFinder::Init()
   fGrowSeeds = GetInt("GrowSeeds", 1);
 
   fInputArray = ImportArray(GetString("InputArray", "TrackSmearing/tracks"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   fOutputArray = ExportArray(GetString("OutputArray", "tracks"));
   fVertexOutputArray = ExportArray(GetString("VertexOutputArray", "vertices"));
@@ -71,7 +72,6 @@ void VertexFinder::Init()
 
 void VertexFinder::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

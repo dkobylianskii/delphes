@@ -29,6 +29,8 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
+
 class TObjArray;
 
 class TruthVertexFinder: public DelphesModule
@@ -44,8 +46,8 @@ public:
 private:
   Double_t fResolution; //!
 
-  TIterator *fItInputArray = nullptr; //!
-  TIterator *fItOutputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
+  std::unique_ptr<TIterator> fItOutputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

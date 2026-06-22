@@ -2,6 +2,7 @@
 #define RunPUPPI_h
 
 #include "classes/DelphesModule.h"
+#include <memory>
 #include <vector>
 
 class TObjArray;
@@ -20,14 +21,14 @@ public:
   void Finish();
 
 private:
-  TIterator *fItTrackInputArray = nullptr;
-  TIterator *fItNeutralInputArray = nullptr; //!
-  TIterator *fPVItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItTrackInputArray; //!
+  std::unique_ptr<TIterator> fItNeutralInputArray; //!
+  std::unique_ptr<TIterator> fPVItInputArray; //!
 
   const TObjArray *fTrackInputArray = nullptr;
   const TObjArray *fNeutralInputArray = nullptr; //!
   const TObjArray *fPVInputArray = nullptr; //!
-  PuppiContainer *fPuppi = nullptr;
+  std::unique_ptr<PuppiContainer> fPuppi; //!
   // puppi parameters
   bool fApplyNoLep;
   double fMinPuppiWeight;

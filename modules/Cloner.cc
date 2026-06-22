@@ -36,6 +36,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -60,7 +61,7 @@ void Cloner::Init()
   // import input array(s)
 
   fInputArray = ImportArray(GetString("InputArray", "FastJetFinder/jets"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array(s)
 
@@ -71,7 +72,6 @@ void Cloner::Init()
 
 void Cloner::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

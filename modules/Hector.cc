@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -82,7 +83,7 @@ void Hector::Init()
   fSigmaT = GetDouble("SigmaT", 0.0);
   fEtaMin = GetDouble("EtaMin", 5.0);
 
-  fBeamLine = new H_BeamLine(fDirection, fBeamLineLength + 0.1);
+  fBeamLine = make_unique<H_BeamLine>(fDirection, fBeamLineLength + 0.1);
   fBeamLine->fill(GetString("BeamLineFile", "cards/LHCB1IR5_5TeV.tfs"), fDirection, GetString("IPName", "IP5"));
   fBeamLine->offsetElements(fOffsetS, fOffsetX);
   fBeamLine->calcMatrix();
@@ -90,7 +91,7 @@ void Hector::Init()
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "ParticlePropagator/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
 
@@ -101,8 +102,6 @@ void Hector::Init()
 
 void Hector::Finish()
 {
-  delete fItInputArray;
-  delete fBeamLine;
 }
 
 //------------------------------------------------------------------------------
@@ -148,9 +147,9 @@ void Hector::Process()
     particle.smearAng(fSigmaX, fSigmaY, gRandom);
     particle.smearE(fSigmaE, gRandom);
 
-    particle.computePath(fBeamLine);
+    particle.computePath(fBeamLine.get());
 
-    if(particle.stopped(fBeamLine)) continue;
+    if(particle.stopped(fBeamLine.get())) continue;
 
     particle.propagate(fDistance);
 

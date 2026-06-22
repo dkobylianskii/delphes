@@ -30,6 +30,7 @@
 #include "classes/DelphesModule.h"
 
 #include <map>
+#include <memory>
 #include <set>
 
 class TObjArray;
@@ -56,7 +57,7 @@ private:
   std::map<TIndexStruct, Double_t> fWeightMap;
 #endif
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

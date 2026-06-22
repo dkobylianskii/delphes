@@ -45,6 +45,7 @@
 #include "TObjArray.h"
 
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 using namespace std;
@@ -53,22 +54,17 @@ using namespace std;
 
 TrackCovariance::TrackCovariance()
 {
-  fGeometry = new SolGeom();
-  fCovariance = new SolGridCov();
-  fElectronScaleFactor = new DelphesFormula;
-  fMuonScaleFactor = new DelphesFormula;
-  fChargedHadronScaleFactor = new DelphesFormula;
+  fGeometry = make_unique<SolGeom>();
+  fCovariance = make_unique<SolGridCov>();
+  fElectronScaleFactor = make_unique<DelphesFormula>();
+  fMuonScaleFactor = make_unique<DelphesFormula>();
+  fChargedHadronScaleFactor = make_unique<DelphesFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 TrackCovariance::~TrackCovariance()
 {
-  delete fGeometry;
-  delete fCovariance;
-  delete fElectronScaleFactor;
-  delete fMuonScaleFactor;
-  delete fChargedHadronScaleFactor;
 }
 
 //------------------------------------------------------------------------------
@@ -86,14 +82,14 @@ void TrackCovariance::Init()
   fChargedHadronScaleFactor->Compile(GetString("ChargedHadronScaleFactor", "1.0"));
 
   // load geometry
-  fCovariance->Calc(fGeometry);
+  fCovariance->Calc(fGeometry.get());
   fCovariance->SetMinHits(fNMinHits);
   // load geometry
   fAcx = fCovariance->AccPnt();
 
   // import input array
   fInputArray = ImportArray(GetString("InputArray", "TrackMerger/tracks"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
 
@@ -104,7 +100,6 @@ void TrackCovariance::Init()
 
 void TrackCovariance::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------
@@ -137,7 +132,7 @@ void TrackCovariance::Process()
     if(inside)
       Accept = fCovariance->IsAccepted(candidateMomentum.Vect());
     else
-      Accept = fCovariance->IsAccepted(candidatePosition.Vect(), candidateMomentum.Vect(), fGeometry);
+      Accept = fCovariance->IsAccepted(candidatePosition.Vect(), candidateMomentum.Vect(), fGeometry.get());
     if(!Accept) continue;
 
     mass = candidateMomentum.M();
@@ -153,7 +148,7 @@ void TrackCovariance::Process()
     // Comment lines below within ******** and
     // uncomment above to return to standard implementation
     //
-    ObsTrk track(candidatePosition.Vect(), candidateMomentum.Vect(), candidate->Charge, mass, fGeometry);
+    ObsTrk track(candidatePosition.Vect(), candidateMomentum.Vect(), candidate->Charge, mass, fGeometry.get());
     Int_t MinMeasure = 6; // minimum number of measurements required
     if(track.GetUmeas() < MinMeasure) continue;
     //

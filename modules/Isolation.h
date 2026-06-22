@@ -32,6 +32,8 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
+
 class TObjArray;
 
 class ExRootFilter;
@@ -62,15 +64,15 @@ private:
 
   Bool_t fUseMiniCone;
 
-  IsolationClassifier *fClassifier = nullptr; //!
+  std::unique_ptr<IsolationClassifier> fClassifier; //!
 
-  ExRootFilter *fFilter = nullptr;
+  std::unique_ptr<ExRootFilter> fFilter; //!
 
-  TIterator *fItIsolationInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItIsolationInputArray; //!
 
-  TIterator *fItCandidateInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItCandidateInputArray; //!
 
-  TIterator *fItRhoInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItRhoInputArray; //!
 
   const TObjArray *fIsolationInputArray = nullptr; //!
 

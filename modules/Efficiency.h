@@ -29,6 +29,8 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
+
 class TIterator;
 class TObjArray;
 class DelphesFormula;
@@ -44,9 +46,9 @@ public:
   void Finish();
 
 private:
-  DelphesFormula *fFormula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fFormula; //!
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

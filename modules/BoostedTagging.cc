@@ -42,6 +42,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -95,9 +96,9 @@ BoostedTagging::~BoostedTagging()
 
 void BoostedTagging::Init()
 {
-  map<Int_t, DelphesFormula *>::iterator itEfficiencyMap;
+  map<Int_t, unique_ptr<DelphesFormula> >::iterator itEfficiencyMap;
   ExRootConfParam param;
-  DelphesFormula *formula;
+  unique_ptr<DelphesFormula> formula;
   Int_t i, size;
 
   fBitNumber = GetInt("BitNumber", 0);
@@ -119,51 +120,39 @@ void BoostedTagging::Init()
   fEfficiencyMap.clear();
   for(i = 0; i < size / 2; ++i)
   {
-    formula = new DelphesFormula;
+    formula = make_unique<DelphesFormula>();
     formula->Compile(param[i * 2 + 1].GetString());
 
-    fEfficiencyMap[param[i * 2].GetInt()] = formula;
+    fEfficiencyMap[param[i * 2].GetInt()] = move(formula);
   }
 
   // set default efficiency formula
   itEfficiencyMap = fEfficiencyMap.find(0);
   if(itEfficiencyMap == fEfficiencyMap.end())
   {
-    formula = new DelphesFormula;
+    formula = make_unique<DelphesFormula>();
     formula->Compile("0.0");
 
-    fEfficiencyMap[0] = formula;
+    fEfficiencyMap[0] = move(formula);
   }
 
   // import input array(s)
   fParticleInputArray = ImportArray(GetString("ParticleInputArray", "Delphes/allParticles"));
 
-  fClassifier = new BoostedTaggingClassifier(fParticleInputArray);
+  fClassifier = make_unique<BoostedTaggingClassifier>(fParticleInputArray);
   fClassifier->fPTMin = GetDouble("ResonancePTMin", 0.0);
   fClassifier->fEtaMax = GetDouble("ResonanceEtaMax", 5.0);
 
-  fFilter = new ExRootFilter(fParticleInputArray);
+  fFilter = make_unique<ExRootFilter>(fParticleInputArray);
 
   fJetInputArray = ImportArray(GetString("JetInputArray", "FatJetFinder/jets"));
-  fItJetInputArray = fJetInputArray->MakeIterator();
+  fItJetInputArray.reset(fJetInputArray->MakeIterator());
 }
 
 //------------------------------------------------------------------------------
 
 void BoostedTagging::Finish()
 {
-  map<Int_t, DelphesFormula *>::iterator itEfficiencyMap;
-  DelphesFormula *formula;
-
-  if(fFilter) delete fFilter;
-  if(fClassifier) delete fClassifier;
-  if(fItJetInputArray) delete fItJetInputArray;
-
-  for(itEfficiencyMap = fEfficiencyMap.begin(); itEfficiencyMap != fEfficiencyMap.end(); ++itEfficiencyMap)
-  {
-    formula = itEfficiencyMap->second;
-    if(formula) delete formula;
-  }
 }
 
 //------------------------------------------------------------------------------
@@ -174,12 +163,12 @@ void BoostedTagging::Process()
   Double_t pt, eta, phi, e, dr, bestDR, eff, mass;
   Int_t pdgCode, origin;
   TObjArray *resonanceArray;
-  map<Int_t, DelphesFormula *>::iterator itEfficiencyMap;
+  map<Int_t, unique_ptr<DelphesFormula> >::iterator itEfficiencyMap;
   DelphesFormula *formula;
 
   // select resonances
   fFilter->Reset();
-  resonanceArray = fFilter->GetSubArray(fClassifier, 0);
+  resonanceArray = fFilter->GetSubArray(fClassifier.get(), 0);
 
   // loop over all input jets
   fItJetInputArray->Reset();
@@ -223,7 +212,7 @@ void BoostedTagging::Process()
     {
       itEfficiencyMap = fEfficiencyMap.find(0);
     }
-    formula = itEfficiencyMap->second;
+    formula = itEfficiencyMap->second.get();
 
     // apply an efficiency formula
     eff = formula->Eval(pt, eta, phi, e);

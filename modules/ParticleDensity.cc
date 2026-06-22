@@ -45,6 +45,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -70,7 +71,7 @@ void ParticleDensity::Init()
   // import input array(s)
 
   fInputArray = ImportArray(GetString("InputArray", "FastJetFinder/jets"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array(s)
 
@@ -96,7 +97,7 @@ void ParticleDensity::Init()
     binsPhi[i] = paramPhi[i].GetDouble();
   }
 
-  fHisto = new TH2F("hParticleDensity", ";#eta;#varphi;d^{2}N/d#etad#varphi", nbinsEta, binsEta.data(), nbinsPhi, binsPhi.data());
+  fHisto = make_unique<TH2F>("hParticleDensity", ";#eta;#varphi;d^{2}N/d#etad#varphi", nbinsEta, binsEta.data(), nbinsPhi, binsPhi.data());
 
   fUseMomentumVector = GetBool("UseMomentumVector", false);
 }
@@ -105,8 +106,6 @@ void ParticleDensity::Init()
 
 void ParticleDensity::Finish()
 {
-  delete fItInputArray;
-  delete fHisto;
 }
 
 //------------------------------------------------------------------------------

@@ -18,6 +18,7 @@
 #include "classes/DelphesModule.h"
 
 #include <map>
+#include <memory>
 
 class TObjArray;
 class DelphesFormula;
@@ -42,17 +43,17 @@ private:
   Double_t fDeltaRTrack;
   Double_t fTrackPTMin;
 
-  std::map<Int_t, DelphesFormula *> fEfficiencyMap; //!
+  std::map<Int_t, std::unique_ptr<DelphesFormula> > fEfficiencyMap; //!
 
-  TrackCountingTauTaggingPartonClassifier *fClassifier = nullptr; //!
+  std::unique_ptr<TrackCountingTauTaggingPartonClassifier> fClassifier; //!
 
-  ExRootFilter *fFilter = nullptr;
+  std::unique_ptr<ExRootFilter> fFilter; //!
 
-  TIterator *fItPartonInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItPartonInputArray; //!
 
-  TIterator *fItTrackInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItTrackInputArray; //!
 
-  TIterator *fItJetInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItJetInputArray; //!
 
   const TObjArray *fParticleInputArray = nullptr; //!
 

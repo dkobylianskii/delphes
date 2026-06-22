@@ -29,7 +29,7 @@
 
 #include "classes/DelphesModule.h"
 
-#include <map>
+#include <memory>
 #include <vector>
 
 class TIterator;
@@ -48,9 +48,15 @@ public:
 private:
   Double_t fJetPTMin;
 
-  std::vector<TIterator *> fInputList; //!
+  struct TEntryStruct
+  {
+    std::unique_ptr<TIterator> iterator;
+    TObjArray *array;
+  };
 
-  std::map<TIterator *, TObjArray *> fInputMap; //!
+  std::vector<TEntryStruct> fJetList; //!
+
+  std::vector<TEntryStruct> fConstituentList; //!
 
   TObjArray *fOutputArray = nullptr; //!
 

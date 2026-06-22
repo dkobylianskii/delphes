@@ -30,6 +30,7 @@
 #include "classes/DelphesClasses.h"
 #include "classes/DelphesModule.h"
 #include <map>
+#include <memory>
 
 class TObjArray;
 class DelphesFormula;
@@ -54,16 +55,16 @@ public:
 private:
   Double_t fDeltaR;
 
-  PartonClassifier *fPartonClassifier = nullptr; //!
-  ParticleLHEFClassifier *fParticleLHEFClassifier = nullptr; //!
+  std::unique_ptr<PartonClassifier> fPartonClassifier; //!
+  std::unique_ptr<ParticleLHEFClassifier> fParticleLHEFClassifier; //!
 
-  ExRootFilter *fPartonFilter = nullptr;
-  ExRootFilter *fParticleLHEFFilter = nullptr;
+  std::unique_ptr<ExRootFilter> fPartonFilter; //!
+  std::unique_ptr<ExRootFilter> fParticleLHEFFilter; //!
 
-  TIterator *fItPartonInputArray = nullptr; //!
-  TIterator *fItParticleInputArray = nullptr; //!
-  TIterator *fItParticleLHEFInputArray = nullptr; //!
-  TIterator *fItJetInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItPartonInputArray; //!
+  std::unique_ptr<TIterator> fItParticleInputArray; //!
+  std::unique_ptr<TIterator> fItParticleLHEFInputArray; //!
+  std::unique_ptr<TIterator> fItJetInputArray; //!
 
   const TObjArray *fPartonInputArray = nullptr; //!
   const TObjArray *fParticleInputArray = nullptr; //!

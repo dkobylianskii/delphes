@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -104,13 +105,13 @@ void FastJetGridMedianEstimator::Init()
     rapMax = param[i * 4 + 1].GetDouble();
     drap = param[i * 4 + 2].GetDouble();
     dphi = param[i * 4 + 3].GetDouble();
-    fEstimators.push_back(new GridMedianBackgroundEstimator(rapMin, rapMax, drap, dphi));
+    fEstimators.push_back(make_unique<GridMedianBackgroundEstimator>(rapMin, rapMax, drap, dphi));
   }
 
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "Calorimeter/towers"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   fRhoOutputArray = ExportArray(GetString("RhoOutputArray", "rho"));
 }
@@ -119,14 +120,6 @@ void FastJetGridMedianEstimator::Init()
 
 void FastJetGridMedianEstimator::Finish()
 {
-  vector<GridMedianBackgroundEstimator *>::iterator itEstimators;
-
-  for(itEstimators = fEstimators.begin(); itEstimators != fEstimators.end(); ++itEstimators)
-  {
-    if(*itEstimators) delete *itEstimators;
-  }
-
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------
@@ -140,8 +133,7 @@ void FastJetGridMedianEstimator::Process()
   PseudoJet jet;
   vector<PseudoJet> inputList, outputList;
 
-  vector<GridMedianBackgroundEstimator *>::iterator itEstimators;
-  ;
+  vector<unique_ptr<GridMedianBackgroundEstimator> >::iterator itEstimators;
 
   DelphesFactory *factory = GetFactory();
 

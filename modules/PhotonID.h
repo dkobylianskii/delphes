@@ -31,6 +31,8 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
+
 class TIterator;
 class TObjArray;
 class DelphesFormula;
@@ -47,17 +49,17 @@ public:
   void Finish();
 
 private:
-  DelphesFormula *fPromptFormula = nullptr;
-  DelphesFormula *fNonPromptFormula = nullptr;
-  DelphesFormula *fFakeFormula = nullptr;
+  std::unique_ptr<DelphesFormula> fPromptFormula; //!
+  std::unique_ptr<DelphesFormula> fNonPromptFormula; //!
+  std::unique_ptr<DelphesFormula> fFakeFormula; //!
 
   // import input arrays
   const TObjArray *fInputPhotonArray = nullptr;
-  TIterator *fItInputPhotonArray = nullptr;
+  std::unique_ptr<TIterator> fItInputPhotonArray; //!
 
   // use filtered collection for speed
   const TObjArray *fInputGenArray = nullptr;
-  TIterator *fItInputGenArray = nullptr;
+  std::unique_ptr<TIterator> fItInputGenArray; //!
 
   Double_t fPTMin;
   Double_t fRelIsoMax;

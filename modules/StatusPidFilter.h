@@ -31,6 +31,7 @@
  */
 
 #include "classes/DelphesModule.h"
+#include <memory>
 
 class TIterator;
 class TObjArray;
@@ -50,7 +51,7 @@ private:
 
   Bool_t fRequireNotPileup; //!
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

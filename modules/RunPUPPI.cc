@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -33,11 +34,11 @@ void RunPUPPI::Init()
 {
   // input collection
   fTrackInputArray = ImportArray(GetString("TrackInputArray", "Calorimeter/towers"));
-  fItTrackInputArray = fTrackInputArray->MakeIterator();
+  fItTrackInputArray.reset(fTrackInputArray->MakeIterator());
   fNeutralInputArray = ImportArray(GetString("NeutralInputArray", "Calorimeter/towers"));
-  fItNeutralInputArray = fNeutralInputArray->MakeIterator();
+  fItNeutralInputArray.reset(fNeutralInputArray->MakeIterator());
   fPVInputArray = ImportArray(GetString("PVInputArray", "PV"));
-  fPVItInputArray = fPVInputArray->MakeIterator();
+  fPVItInputArray.reset(fPVInputArray->MakeIterator());
   // puppi parameters
   fApplyNoLep = GetBool("UseNoLep", true);
   fMinPuppiWeight = GetDouble("MinPuppiWeight", 0.01);
@@ -138,16 +139,13 @@ void RunPUPPI::Init()
     //if(std::find(puppiAlgo.begin(),puppiAlgo.end(),algoTmp) != puppiAlgo.end()) continue;
     puppiAlgo.push_back(algoTmp);
   }
-  fPuppi = new PuppiContainer(true, fUseExp, fMinPuppiWeight, puppiAlgo);
+  fPuppi = make_unique<PuppiContainer>(true, fUseExp, fMinPuppiWeight, puppiAlgo);
 }
 
 //------------------------------------------------------------------------------
 
 void RunPUPPI::Finish()
 {
-  delete fItTrackInputArray;
-  delete fItNeutralInputArray;
-  delete fPuppi;
 }
 
 //------------------------------------------------------------------------------

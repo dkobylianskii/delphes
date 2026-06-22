@@ -12,6 +12,7 @@
 #include "classes/DelphesModule.h"
 
 #include <deque>
+#include <memory>
 
 class TObjArray;
 class DelphesFormula;
@@ -88,15 +89,15 @@ MeanSqDeltaR
 
   Bool_t fAverageEachTower;
 
-  TIterator *fItJetInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItJetInputArray; //!
 
   const TObjArray *fJetInputArray = nullptr; //!
 
   const TObjArray *fTrackInputArray = nullptr; // SCZ
   const TObjArray *fNeutralInputArray = nullptr;
 
-  TIterator *fItTrackInputArray = nullptr; // SCZ
-  TIterator *fItNeutralInputArray = nullptr; // SCZ
+  std::unique_ptr<TIterator> fItTrackInputArray; // SCZ
+  std::unique_ptr<TIterator> fItNeutralInputArray; // SCZ
 
   TObjArray *fOutputArray = nullptr; //!
   TObjArray *fNeutralsInPassingJets = nullptr; // SCZ

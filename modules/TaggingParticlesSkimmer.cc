@@ -48,6 +48,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -75,15 +76,15 @@ void TaggingParticlesSkimmer::Init()
 
   // import input array
   fPartonInputArray = ImportArray(GetString("PartonInputArray", "Delphes/partons"));
-  fItPartonInputArray = fPartonInputArray->MakeIterator();
+  fItPartonInputArray.reset(fPartonInputArray->MakeIterator());
 
   fParticleInputArray = ImportArray(GetString("ParticleInputArray", "Delphes/allParticles"));
 
-  fClassifier = new TauTaggingPartonClassifier(fParticleInputArray);
+  fClassifier = make_unique<TauTaggingPartonClassifier>(fParticleInputArray);
   fClassifier->fPTMin = GetDouble("PTMin", 15.0);
   fClassifier->fEtaMax = GetDouble("EtaMax", 2.5);
 
-  fFilter = new ExRootFilter(fPartonInputArray);
+  fFilter = make_unique<ExRootFilter>(fPartonInputArray);
 
   // output array
   fOutputArray = ExportArray(GetString("OutputArray", "taggingParticles"));
@@ -93,9 +94,6 @@ void TaggingParticlesSkimmer::Init()
 
 void TaggingParticlesSkimmer::Finish()
 {
-  delete fItPartonInputArray;
-  delete fFilter;
-  delete fClassifier;
 }
 
 //------------------------------------------------------------------------------
@@ -110,7 +108,7 @@ void TaggingParticlesSkimmer::Process()
 
   // first select hadronic taus and replace them by visible part
   fFilter->Reset();
-  tauArray = fFilter->GetSubArray(fClassifier, 0);
+  tauArray = fFilter->GetSubArray(fClassifier.get(), 0);
 
   if(tauArray == 0) return;
 

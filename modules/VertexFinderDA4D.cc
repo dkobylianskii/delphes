@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -96,16 +97,14 @@ VertexFinderDA4D::VertexFinderDA4D() :
   fUseTc(0), fBetaMax(0), fBetaStop(0), fCoolingFactor(0),
   fMaxIterations(0), fDzCutOff(0), fD0CutOff(0), fDtCutOff(0)
 {
-  fClusterArray = new TObjArray;
-  fItClusterArray = fClusterArray->MakeIterator();
+  fClusterArray = make_unique<TObjArray>();
+  fItClusterArray.reset(fClusterArray->MakeIterator());
 }
 
 //------------------------------------------------------------------------------
 
 VertexFinderDA4D::~VertexFinderDA4D()
 {
-  delete fClusterArray;
-  delete fItClusterArray;
 }
 
 //------------------------------------------------------------------------------
@@ -133,7 +132,7 @@ void VertexFinderDA4D::Init()
   fD0CutOff /= 10.0;
 
   fInputArray = ImportArray(GetString("InputArray", "TrackSmearing/tracks"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   fOutputArray = ExportArray(GetString("OutputArray", "tracks"));
   fVertexOutputArray = ExportArray(GetString("VertexOutputArray", "vertices"));
@@ -143,7 +142,6 @@ void VertexFinderDA4D::Init()
 
 void VertexFinderDA4D::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

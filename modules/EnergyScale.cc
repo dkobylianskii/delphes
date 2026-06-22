@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -53,14 +54,13 @@ using namespace std;
 
 EnergyScale::EnergyScale()
 {
-  fFormula = new DelphesFormula;
+  fFormula = make_unique<DelphesFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 EnergyScale::~EnergyScale()
 {
-  delete fFormula;
 }
 
 //------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void EnergyScale::Init()
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "FastJetFinder/jets"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
 
@@ -85,7 +85,6 @@ void EnergyScale::Init()
 
 void EnergyScale::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

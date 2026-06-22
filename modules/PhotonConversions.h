@@ -29,6 +29,8 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
+
 class TClonesArray;
 class TIterator;
 class DelphesCylindricalFormula;
@@ -48,15 +50,15 @@ private:
   Double_t fRadius, fRadius2, fHalfLength;
   Double_t fEtaMin, fEtaMax;
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 
   TObjArray *fOutputArray = nullptr; //!
 
-  DelphesCylindricalFormula *fConversionMap = nullptr; //!
+  std::unique_ptr<DelphesCylindricalFormula> fConversionMap; //!
 
-  TF1 *fDecayXsec = nullptr; //!
+  std::unique_ptr<TF1> fDecayXsec; //!
 
   Double_t fStep;
 

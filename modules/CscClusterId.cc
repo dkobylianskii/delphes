@@ -47,6 +47,7 @@
 #include "assert.h"
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 using namespace std;
@@ -55,16 +56,14 @@ using namespace std;
 
 CscClusterId::CscClusterId()
 {
-  fFormula = new DelphesCscClusterFormula;
-  fEtaFormula = new DelphesCscClusterFormula;
+  fFormula = make_unique<DelphesCscClusterFormula>();
+  fEtaFormula = make_unique<DelphesCscClusterFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 CscClusterId::~CscClusterId()
 {
-  delete fFormula;
-  delete fEtaFormula;
 }
 
 //------------------------------------------------------------------------------
@@ -80,7 +79,7 @@ void CscClusterId::Init()
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "ParticlePropagator/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
 
@@ -91,7 +90,6 @@ void CscClusterId::Init()
 
 void CscClusterId::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

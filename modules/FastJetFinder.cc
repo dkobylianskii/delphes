@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -90,12 +91,10 @@ FastJetFinder::~FastJetFinder()
 
 void FastJetFinder::Init()
 {
-  JetDefinition::Plugin *plugin = 0;
-  JetDefinition::Recombiner *recomb = 0;
   ExRootConfParam param;
   Long_t i, size;
   Double_t etaMin, etaMax;
-  TEstimatorStruct estimatorStruct;
+  TEntryStruct entry;
 
   // define algorithm
 
@@ -133,22 +132,22 @@ void FastJetFinder::Init()
   fGamma = GetDouble("Gamma", 1.0);
   //fBeta parameter see above
 
-  fMeasureDef = new NormalizedMeasure(fBeta, fParameterR);
+  fMeasureDef = make_unique<NormalizedMeasure>(fBeta, fParameterR);
 
   switch(fAxisMode)
   {
   default:
   case 1:
-    fAxesDef = new WTA_KT_Axes();
+    fAxesDef = make_unique<WTA_KT_Axes>();
     break;
   case 2:
-    fAxesDef = new OnePass_WTA_KT_Axes();
+    fAxesDef = make_unique<OnePass_WTA_KT_Axes>();
     break;
   case 3:
-    fAxesDef = new KT_Axes();
+    fAxesDef = make_unique<KT_Axes>();
     break;
   case 4:
-    fAxesDef = new OnePass_KT_Axes();
+    fAxesDef = make_unique<OnePass_KT_Axes>();
   }
 
   //-- Trimming parameters --
@@ -191,75 +190,72 @@ void FastJetFinder::Init()
   {
   default:
   case 0:
-    fAreaDefinition = 0;
+    fAreaDefinition.reset();
     break;
   case 1:
-    fAreaDefinition = new AreaDefinition(active_area_explicit_ghosts, GhostedAreaSpec(fGhostEtaMax, fRepeat, fGhostArea, fGridScatter, fPtScatter, fMeanGhostPt));
+    fAreaDefinition = make_unique<AreaDefinition>(active_area_explicit_ghosts, GhostedAreaSpec(fGhostEtaMax, fRepeat, fGhostArea, fGridScatter, fPtScatter, fMeanGhostPt));
     break;
   case 2:
-    fAreaDefinition = new AreaDefinition(one_ghost_passive_area, GhostedAreaSpec(fGhostEtaMax, fRepeat, fGhostArea, fGridScatter, fPtScatter, fMeanGhostPt));
+    fAreaDefinition = make_unique<AreaDefinition>(one_ghost_passive_area, GhostedAreaSpec(fGhostEtaMax, fRepeat, fGhostArea, fGridScatter, fPtScatter, fMeanGhostPt));
     break;
   case 3:
-    fAreaDefinition = new AreaDefinition(passive_area, GhostedAreaSpec(fGhostEtaMax, fRepeat, fGhostArea, fGridScatter, fPtScatter, fMeanGhostPt));
+    fAreaDefinition = make_unique<AreaDefinition>(passive_area, GhostedAreaSpec(fGhostEtaMax, fRepeat, fGhostArea, fGridScatter, fPtScatter, fMeanGhostPt));
     break;
   case 4:
-    fAreaDefinition = new AreaDefinition(VoronoiAreaSpec(fEffectiveRfact));
+    fAreaDefinition = make_unique<AreaDefinition>(VoronoiAreaSpec(fEffectiveRfact));
     break;
   case 5:
-    fAreaDefinition = new AreaDefinition(active_area, GhostedAreaSpec(fGhostEtaMax, fRepeat, fGhostArea, fGridScatter, fPtScatter, fMeanGhostPt));
+    fAreaDefinition = make_unique<AreaDefinition>(active_area, GhostedAreaSpec(fGhostEtaMax, fRepeat, fGhostArea, fGridScatter, fPtScatter, fMeanGhostPt));
     break;
   }
 
   switch(fJetAlgorithm)
   {
   case 1:
-    plugin = new CDFJetCluPlugin(fSeedThreshold, fConeRadius, fAdjacencyCut, fMaxIterations, fIratch, fOverlapThreshold);
-    fDefinition = new JetDefinition(plugin);
+    fPlugin = make_unique<CDFJetCluPlugin>(fSeedThreshold, fConeRadius, fAdjacencyCut, fMaxIterations, fIratch, fOverlapThreshold);
+    fDefinition = make_unique<JetDefinition>(fPlugin.get());
     break;
   case 2:
-    plugin = new CDFMidPointPlugin(fSeedThreshold, fConeRadius, fConeAreaFraction, fMaxPairSize, fMaxIterations, fOverlapThreshold);
-    fDefinition = new JetDefinition(plugin);
+    fPlugin = make_unique<CDFMidPointPlugin>(fSeedThreshold, fConeRadius, fConeAreaFraction, fMaxPairSize, fMaxIterations, fOverlapThreshold);
+    fDefinition = make_unique<JetDefinition>(fPlugin.get());
     break;
   case 3:
-    plugin = new SISConePlugin(fConeRadius, fOverlapThreshold, fMaxIterations, fJetPTMin);
-    fDefinition = new JetDefinition(plugin);
+    fPlugin = make_unique<SISConePlugin>(fConeRadius, fOverlapThreshold, fMaxIterations, fJetPTMin);
+    fDefinition = make_unique<JetDefinition>(fPlugin.get());
     break;
   case 4:
-    fDefinition = new JetDefinition(kt_algorithm, fParameterR);
+    fDefinition = make_unique<JetDefinition>(kt_algorithm, fParameterR);
     break;
   case 5:
-    fDefinition = new JetDefinition(cambridge_algorithm, fParameterR);
+    fDefinition = make_unique<JetDefinition>(cambridge_algorithm, fParameterR);
     break;
   default:
   case 6:
-    fDefinition = new JetDefinition(antikt_algorithm, fParameterR);
+    fDefinition = make_unique<JetDefinition>(antikt_algorithm, fParameterR);
     break;
   case 7:
-    recomb = new WinnerTakeAllRecombiner();
-    fDefinition = new JetDefinition(antikt_algorithm, fParameterR, recomb, Best);
+    fRecomb = make_unique<WinnerTakeAllRecombiner>();
+    fDefinition = make_unique<JetDefinition>(antikt_algorithm, fParameterR, fRecomb.get(), Best);
     break;
   case 8:
-    fNjettinessPlugin = new NjettinessPlugin(fN, Njettiness::wta_kt_axes, Njettiness::unnormalized_cutoff_measure, fBeta, fRcutOff);
-    fDefinition = new JetDefinition(fNjettinessPlugin);
+    fNjettinessPlugin = make_unique<NjettinessPlugin>(fN, Njettiness::wta_kt_axes, Njettiness::unnormalized_cutoff_measure, fBeta, fRcutOff);
+    fDefinition = make_unique<JetDefinition>(fNjettinessPlugin.get());
     break;
   case 9:
-    fValenciaPlugin = new ValenciaPlugin(fParameterR, fBeta, fGamma);
-    fDefinition = new JetDefinition(fValenciaPlugin);
+    fValenciaPlugin = make_unique<ValenciaPlugin>(fParameterR, fBeta, fGamma);
+    fDefinition = make_unique<JetDefinition>(fValenciaPlugin.get());
     break;
   case 10:
-    fDefinition = new JetDefinition(ee_genkt_algorithm, fParameterR, fParameterP);
+    fDefinition = make_unique<JetDefinition>(ee_genkt_algorithm, fParameterR, fParameterP);
     break;
 
   // kT durham algorithm, 2 options:
   // 1. njets mode: stop when reach predetermined n jet (optionally apply sqrt(ExclYmerge(n-1,n))*Evis) > cut offline)
   // 2. dcut mode: stop when all dij above some threshold dcut. Is applied if fDCut > 0.
   case 11:
-    fDefinition = new JetDefinition(ee_kt_algorithm);
+    fDefinition = make_unique<JetDefinition>(ee_kt_algorithm);
     break;
   }
-
-  fPlugin = plugin;
-  fRecomb = recomb;
 
   ClusterSequence::print_banner();
 
@@ -275,17 +271,17 @@ void FastJetFinder::Init()
     {
       etaMin = param[i * 2].GetDouble();
       etaMax = param[i * 2 + 1].GetDouble();
-      estimatorStruct.estimator = new JetMedianBackgroundEstimator(SelectorRapRange(etaMin, etaMax), *fDefinition, *fAreaDefinition);
-      estimatorStruct.etaMin = etaMin;
-      estimatorStruct.etaMax = etaMax;
-      fEstimators.push_back(estimatorStruct);
+      entry.estimator = make_unique<JetMedianBackgroundEstimator>(SelectorRapRange(etaMin, etaMax), *fDefinition, *fAreaDefinition);
+      entry.etaMin = etaMin;
+      entry.etaMax = etaMax;
+      fEstimators.push_back(move(entry));
     }
   }
 
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "Calorimeter/towers"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output arrays
 
@@ -298,22 +294,6 @@ void FastJetFinder::Init()
 
 void FastJetFinder::Finish()
 {
-  vector<TEstimatorStruct>::iterator itEstimators;
-
-  for(itEstimators = fEstimators.begin(); itEstimators != fEstimators.end(); ++itEstimators)
-  {
-    if(itEstimators->estimator) delete itEstimators->estimator;
-  }
-
-  delete fItInputArray;
-  delete fDefinition;
-  delete fAreaDefinition;
-  delete static_cast<JetDefinition::Plugin *>(fPlugin);
-  delete static_cast<JetDefinition::Recombiner *>(fRecomb);
-  delete fNjettinessPlugin;
-  delete fAxesDef;
-  delete fMeasureDef;
-  delete fValenciaPlugin;
 }
 
 //------------------------------------------------------------------------------
@@ -331,10 +311,10 @@ void FastJetFinder::Process()
   Int_t charge;
   Double_t rho = 0.0;
   PseudoJet jet, area;
-  ClusterSequence *sequence;
+  unique_ptr<ClusterSequence> sequence;
   vector<PseudoJet> inputList, outputList, subjets;
   vector<PseudoJet>::iterator itInputList, itOutputList;
-  vector<TEstimatorStruct>::iterator itEstimators;
+  vector<TEntryStruct>::iterator itEstimators;
   Double_t excl_ymerge12 = 0.0;
   Double_t excl_ymerge23 = 0.0;
   Double_t excl_ymerge34 = 0.0;
@@ -360,11 +340,11 @@ void FastJetFinder::Process()
   // construct jets
   if(fAreaDefinition)
   {
-    sequence = new ClusterSequenceArea(inputList, *fDefinition, *fAreaDefinition);
+    sequence = make_unique<ClusterSequenceArea>(inputList, *fDefinition, *fAreaDefinition);
   }
   else
   {
-    sequence = new ClusterSequence(inputList, *fDefinition);
+    sequence = make_unique<ClusterSequence>(inputList, *fDefinition);
   }
 
   // compute rho and store it
@@ -598,5 +578,4 @@ void FastJetFinder::Process()
 
     fOutputArray->Add(candidate);
   }
-  delete sequence;
 }

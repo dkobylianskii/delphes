@@ -30,6 +30,8 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
+
 class TIterator;
 class TObjArray;
 
@@ -54,9 +56,9 @@ private:
 
   Int_t fGasOption;
 
-  TrkUtil *fTrackUtil = nullptr;
+  std::unique_ptr<TrkUtil> fTrackUtil; //!
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

@@ -29,6 +29,7 @@
  */
 
 #include "classes/DelphesModule.h"
+#include <memory>
 
 class TClonesArray;
 class TIterator;
@@ -51,7 +52,7 @@ private:
   Double_t fLmin; // minimum
 
   Bool_t fDebug;
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

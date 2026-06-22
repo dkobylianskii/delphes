@@ -46,6 +46,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -55,18 +56,15 @@ using namespace std;
 
 PhotonID::PhotonID()
 {
-  fPromptFormula = new DelphesFormula;
-  fNonPromptFormula = new DelphesFormula;
-  fFakeFormula = new DelphesFormula;
+  fPromptFormula = make_unique<DelphesFormula>();
+  fNonPromptFormula = make_unique<DelphesFormula>();
+  fFakeFormula = make_unique<DelphesFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 PhotonID::~PhotonID()
 {
-  delete fPromptFormula;
-  delete fNonPromptFormula;
-  delete fFakeFormula;
 }
 
 //------------------------------------------------------------------------------
@@ -81,11 +79,11 @@ void PhotonID::Init()
 
   // import input arrays
   fInputPhotonArray = ImportArray(GetString("InputPhotonArray", "PhotonIsolation/photons"));
-  fItInputPhotonArray = fInputPhotonArray->MakeIterator();
+  fItInputPhotonArray.reset(fInputPhotonArray->MakeIterator());
 
   // use filtered collection for speed
   fInputGenArray = ImportArray(GetString("InputGenArray", "GenParticleFilter/filteredParticles"));
-  fItInputGenArray = fInputGenArray->MakeIterator();
+  fItInputGenArray.reset(fInputGenArray->MakeIterator());
 
   // min pt to be considered, make sure this threshold is higher than threshold in particle filter
   fPTMin = GetDouble("PTMin", 10.0);
@@ -101,8 +99,6 @@ void PhotonID::Init()
 
 void PhotonID::Finish()
 {
-  delete fItInputPhotonArray;
-  delete fItInputGenArray;
 }
 
 //------------------------------------------------------------------------------

@@ -28,6 +28,7 @@
  */
 
 #include "classes/DelphesModule.h"
+#include <memory>
 #include <vector>
 
 class TObjArray;
@@ -49,9 +50,9 @@ public:
   void Finish();
 
 private:
-  std::vector<fastjet::GridMedianBackgroundEstimator *> fEstimators; //!
+  std::vector<std::unique_ptr<fastjet::GridMedianBackgroundEstimator> > fEstimators; //!
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

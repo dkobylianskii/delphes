@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -37,22 +38,17 @@ using namespace std;
 
 TrackSmearing::TrackSmearing()
 {
-  fD0Formula = new DelphesFormula;
-  fDZFormula = new DelphesFormula;
-  fPFormula = new DelphesFormula;
-  fCtgThetaFormula = new DelphesFormula;
-  fPhiFormula = new DelphesFormula;
+  fD0Formula = make_unique<DelphesFormula>();
+  fDZFormula = make_unique<DelphesFormula>();
+  fPFormula = make_unique<DelphesFormula>();
+  fCtgThetaFormula = make_unique<DelphesFormula>();
+  fPhiFormula = make_unique<DelphesFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 TrackSmearing::~TrackSmearing()
 {
-  delete fD0Formula;
-  delete fDZFormula;
-  delete fPFormula;
-  delete fCtgThetaFormula;
-  delete fPhiFormula;
 }
 
 //------------------------------------------------------------------------------
@@ -125,7 +121,7 @@ void TrackSmearing::Init()
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "ParticlePropagator/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // import beamspot
   try
@@ -146,7 +142,6 @@ void TrackSmearing::Init()
 
 void TrackSmearing::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

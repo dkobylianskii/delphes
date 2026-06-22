@@ -45,6 +45,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -68,7 +69,7 @@ void IdentificationMap::Init()
 {
   TMisIDMap::iterator itEfficiencyMap;
   ExRootConfParam param;
-  DelphesFormula *formula;
+  unique_ptr<DelphesFormula> formula;
   Int_t i, size, pdg;
 
   // read efficiency formulas
@@ -78,26 +79,26 @@ void IdentificationMap::Init()
   fEfficiencyMap.clear();
   for(i = 0; i < size / 3; ++i)
   {
-    formula = new DelphesFormula;
+    formula = make_unique<DelphesFormula>();
     formula->Compile(param[i * 3 + 2].GetString());
     pdg = param[i * 3].GetInt();
-    fEfficiencyMap.insert(make_pair(pdg, make_pair(param[i * 3 + 1].GetInt(), formula)));
+    fEfficiencyMap.insert(make_pair(pdg, make_pair(param[i * 3 + 1].GetInt(), move(formula))));
   }
 
   // set default efficiency formula
   itEfficiencyMap = fEfficiencyMap.find(0);
   if(itEfficiencyMap == fEfficiencyMap.end())
   {
-    formula = new DelphesFormula;
+    formula = make_unique<DelphesFormula>();
     formula->Compile("1.0");
 
-    fEfficiencyMap.insert(make_pair(0, make_pair(0, formula)));
+    fEfficiencyMap.insert(make_pair(0, make_pair(0, move(formula))));
   }
 
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "ParticlePropagator/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
 
@@ -108,15 +109,6 @@ void IdentificationMap::Init()
 
 void IdentificationMap::Finish()
 {
-  delete fItInputArray;
-
-  TMisIDMap::iterator itEfficiencyMap;
-  DelphesFormula *formula;
-  for(itEfficiencyMap = fEfficiencyMap.begin(); itEfficiencyMap != fEfficiencyMap.end(); ++itEfficiencyMap)
-  {
-    formula = (itEfficiencyMap->second).second;
-    if(formula) delete formula;
-  }
 }
 
 //------------------------------------------------------------------------------
@@ -160,7 +152,7 @@ void IdentificationMap::Process()
     // loop over sub-map for this PID
     for(TMisIDMap::iterator it = range.first; it != range.second; ++it)
     {
-      formula = (it->second).second;
+      formula = (it->second).second.get();
       pdgCodeOut = (it->second).first;
 
       p = formula->Eval(pt, eta, phi, e);

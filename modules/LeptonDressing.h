@@ -26,6 +26,7 @@
  */
 
 #include "classes/DelphesModule.h"
+#include <memory>
 
 class TIterator;
 class TObjArray;
@@ -43,9 +44,9 @@ public:
 private:
   Double_t fDeltaR;
 
-  TIterator *fItDressingInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItDressingInputArray; //!
 
-  TIterator *fItCandidateInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItCandidateInputArray; //!
 
   const TObjArray *fDressingInputArray = nullptr; //!
 

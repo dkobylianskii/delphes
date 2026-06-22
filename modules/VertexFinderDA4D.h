@@ -11,6 +11,7 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
 #include <vector>
 
 class TObjArray;
@@ -45,11 +46,11 @@ private:
   Double_t fD0CutOff;
   Double_t fDtCutOff; // for when the beamspot has time
 
-  TObjArray *fClusterArray = nullptr;
-  TIterator *fItClusterArray = nullptr;
+  std::unique_ptr<TObjArray> fClusterArray; //!
+  std::unique_ptr<TIterator> fItClusterArray; //!
 
   TObjArray *fInputArray = nullptr;
-  TIterator *fItInputArray = nullptr;
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   TObjArray *fOutputArray = nullptr;
   TObjArray *fVertexOutputArray = nullptr;

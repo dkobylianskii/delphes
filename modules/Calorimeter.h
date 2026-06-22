@@ -31,6 +31,7 @@
 #include "classes/DelphesModule.h"
 
 #include <map>
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -78,7 +79,7 @@ private:
   TBinMap fBinMap; //!
 
   std::vector<Double_t> fEtaBins;
-  std::vector<std::vector<Double_t> *> fPhiBins;
+  std::vector<std::unique_ptr<std::vector<Double_t> > > fPhiBins;
 
   std::vector<Long64_t> fTowerHits;
 
@@ -88,11 +89,11 @@ private:
   std::vector<Double_t> fECalTrackFractions;
   std::vector<Double_t> fHCalTrackFractions;
 
-  DelphesFormula *fECalResolutionFormula = nullptr; //!
-  DelphesFormula *fHCalResolutionFormula = nullptr; //!
+  std::unique_ptr<DelphesFormula> fECalResolutionFormula; //!
+  std::unique_ptr<DelphesFormula> fHCalResolutionFormula; //!
 
-  TIterator *fItParticleInputArray = nullptr; //!
-  TIterator *fItTrackInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItParticleInputArray; //!
+  std::unique_ptr<TIterator> fItTrackInputArray; //!
 
   const TObjArray *fParticleInputArray = nullptr; //!
   const TObjArray *fTrackInputArray = nullptr; //!
@@ -104,11 +105,11 @@ private:
   TObjArray *fEFlowPhotonOutputArray = nullptr; //!
   TObjArray *fEFlowNeutralHadronOutputArray = nullptr; //!
 
-  TObjArray *fECalTowerTrackArray = nullptr; //!
-  TIterator *fItECalTowerTrackArray = nullptr; //!
+  std::unique_ptr<TObjArray> fECalTowerTrackArray; //!
+  std::unique_ptr<TIterator> fItECalTowerTrackArray; //!
 
-  TObjArray *fHCalTowerTrackArray = nullptr; //!
-  TIterator *fItHCalTowerTrackArray = nullptr; //!
+  std::unique_ptr<TObjArray> fHCalTowerTrackArray; //!
+  std::unique_ptr<TIterator> fItHCalTowerTrackArray; //!
 
   void FinalizeTower();
   Double_t LogNormal(Double_t mean, Double_t sigma);

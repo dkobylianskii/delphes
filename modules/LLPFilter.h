@@ -32,6 +32,7 @@
  */
 
 #include "classes/DelphesModule.h"
+#include <memory>
 #include <vector>
 
 class TIterator;
@@ -66,11 +67,11 @@ private:
 
   std::vector<Int_t> fPdgCodes;
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 
-  TIterator *fItParticleInputArray = nullptr;
+  std::unique_ptr<TIterator> fItParticleInputArray; //!
   const TObjArray *fParticleInputArray = nullptr;
 
   TObjArray *fOutputArray = nullptr; //!

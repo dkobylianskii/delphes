@@ -29,6 +29,8 @@
 
 #include "classes/DelphesModule.h"
 
+#include <memory>
+
 class TIterator;
 class TObjArray;
 class DelphesFormula;
@@ -44,10 +46,10 @@ public:
   void Finish();
 
 private:
-  DelphesFormula *fResolutionFormula = nullptr;
+  std::unique_ptr<DelphesFormula> fResolutionFormula; //!
   Int_t fVertexTimeMode;
 
-  TIterator *fItInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
 

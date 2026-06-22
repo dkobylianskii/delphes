@@ -47,6 +47,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -56,16 +57,14 @@ using namespace std;
 
 PhotonConversions::PhotonConversions()
 {
-  fDecayXsec = new TF1("decayXsec", "1.0 - 4.0/3.0 * x * (1.0 - x)", 0.0, 1.0);
-  fConversionMap = new DelphesCylindricalFormula;
+  fDecayXsec = make_unique<TF1>("decayXsec", "1.0 - 4.0/3.0 * x * (1.0 - x)", 0.0, 1.0);
+  fConversionMap = make_unique<DelphesCylindricalFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 PhotonConversions::~PhotonConversions()
 {
-  delete fDecayXsec;
-  delete fConversionMap;
 }
 
 //------------------------------------------------------------------------------
@@ -87,7 +86,7 @@ void PhotonConversions::Init()
   // import array with output from filter/classifier module
 
   fInputArray = ImportArray(GetString("InputArray", "Delphes/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output arrays
 
@@ -98,7 +97,6 @@ void PhotonConversions::Init()
 
 void PhotonConversions::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------

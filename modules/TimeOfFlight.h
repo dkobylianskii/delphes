@@ -28,6 +28,7 @@
 */
 
 #include "classes/DelphesModule.h"
+#include <memory>
 
 class TIterator;
 class TObjArray;
@@ -46,8 +47,8 @@ public:
 private:
   Int_t fVertexTimeMode;
 
-  TIterator *fItInputArray = nullptr; //!
-  TIterator *fItVertexInputArray = nullptr; //!
+  std::unique_ptr<TIterator> fItInputArray; //!
+  std::unique_ptr<TIterator> fItVertexInputArray; //!
 
   const TObjArray *fInputArray = nullptr; //!
   const TObjArray *fVertexInputArray = nullptr; //!

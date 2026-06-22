@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -53,14 +54,13 @@ using namespace std;
 
 EnergySmearing::EnergySmearing()
 {
-  fFormula = new DelphesFormula;
+  fFormula = make_unique<DelphesFormula>();
 }
 
 //------------------------------------------------------------------------------
 
 EnergySmearing::~EnergySmearing()
 {
-  delete fFormula;
 }
 
 //------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void EnergySmearing::Init()
   // import input array
 
   fInputArray = ImportArray(GetString("InputArray", "ParticlePropagator/stableParticles"));
-  fItInputArray = fInputArray->MakeIterator();
+  fItInputArray.reset(fInputArray->MakeIterator());
 
   // create output array
 
@@ -85,7 +85,6 @@ void EnergySmearing::Init()
 
 void EnergySmearing::Finish()
 {
-  delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------
