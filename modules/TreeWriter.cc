@@ -68,6 +68,7 @@ TreeWriter::~TreeWriter()
 
 void TreeWriter::Init()
 {
+  fClassMap.clear();
   fClassMap[GenParticle::Class()] = &TreeWriter::ProcessParticles;
   fClassMap[Vertex::Class()] = &TreeWriter::ProcessVertices;
   fClassMap[Track::Class()] = &TreeWriter::ProcessTracks;
@@ -98,6 +99,8 @@ void TreeWriter::Init()
   ExRootTreeBranch *branch;
 
   size = param.GetSize();
+
+  fBranchMap.clear();
   for(i = 0; i < size / 3; ++i)
   {
     branchInputArray = param[i * 3].GetString();
