@@ -92,8 +92,8 @@ private:
     TObjArray *stableParticleOutputArray,
     TObjArray *partonOutputArray);
 
-  void SkipBytes(int size);
-  void SkipArray(int elsize);
+  void SkipBytes(uint32_t size);
+  void SkipArray(uint32_t elsize);
 
   void ReadFileHeader();
   void ReadEventTable();
@@ -111,8 +111,8 @@ private:
 
   TDatabasePDG *fPDG;
 
-  uint32_t fEntries;
-  int32_t fBlockType, fEventNumber, fEventSize;
+  int32_t fBlockType;
+  uint32_t fEntries, fEventNumber, fEventSize;
   double fWeight, fAlphaQCD, fAlphaQED;
 
   uint32_t fScaleSize;

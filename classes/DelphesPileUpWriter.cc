@@ -37,9 +37,9 @@
 
 using namespace std;
 
-static const int kIndexSize = 10000000;
-static const int kBufferSize = 1000000;
-static const int kRecordSize = 9;
+static const uint32_t kIndexSize = 10000000;
+static const uint32_t kBufferSize = 1000000;
+static const uint32_t kRecordSize = 9;
 
 //------------------------------------------------------------------------------
 

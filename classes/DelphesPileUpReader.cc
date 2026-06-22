@@ -37,9 +37,9 @@
 
 using namespace std;
 
-static const int kIndexSize = 10000000;
-static const int kBufferSize = 1000000;
-static const int kRecordSize = 9;
+static const uint32_t kIndexSize = 10000000;
+static const uint32_t kBufferSize = 1000000;
+static const uint32_t kRecordSize = 9;
 
 //------------------------------------------------------------------------------
 
@@ -73,9 +73,9 @@ DelphesPileUpReader::DelphesPileUpReader(const char *fileName) :
   fseeko(fPileUpFile, -8, SEEK_END);
   fInputReader->ReadValue(&fEntries, 8);
 
-  if(fEntries < 0 || fEntries >= kIndexSize)
+  if(fEntries >= kIndexSize)
   {
-    message << "invalid number of events in pile-up file " << fileName;
+    message << "too many events in pile-up file " << fileName;
     throw runtime_error(message.str());
   }
 
@@ -121,9 +121,9 @@ bool DelphesPileUpReader::ReadParticle(int32_t &pid,
 
 //------------------------------------------------------------------------------
 
-bool DelphesPileUpReader::ReadEntry(int64_t entry)
+bool DelphesPileUpReader::ReadEntry(uint64_t entry)
 {
-  int64_t offset;
+  uint64_t offset;
 
   if(entry >= fEntries) return false;
 
@@ -135,9 +135,9 @@ bool DelphesPileUpReader::ReadEntry(int64_t entry)
   fseeko(fPileUpFile, offset, SEEK_SET);
   fInputReader->ReadValue(&fEntrySize, 4);
 
-  if(fEntrySize < 0 || fEntrySize >= kBufferSize)
+  if(fEntrySize >= kBufferSize)
   {
-    throw runtime_error("invalid number of particles in pile-up event");
+    throw runtime_error("too many particles in pile-up event");
   }
 
   fInputReader->ReadRaw(fBuffer, fEntrySize * kRecordSize * 4);

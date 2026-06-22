@@ -37,16 +37,16 @@ public:
 
   void SetFile(FILE *file);
   void SetBuffer(void *buffer);
-  void SetOffset(int offset);
+  void SetOffset(uint32_t offset);
 
-  void WriteRaw(void *value, int size);
-  void WriteValue(void *value, int size);
+  void WriteRaw(void *value, uint32_t size);
+  void WriteValue(void *value, uint32_t size);
 
 private:
   FILE *fFile;
   uint8_t *fBuffer;
 
-  int fOffset;
+  uint32_t fOffset;
 };
 
 #endif // DelphesXDRWriter_h

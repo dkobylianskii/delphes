@@ -43,15 +43,15 @@ public:
     float &x, float &y, float &z, float &t,
     float &px, float &py, float &pz, float &e);
 
-  bool ReadEntry(int64_t entry);
+  bool ReadEntry(uint64_t entry);
 
-  int64_t GetEntries() const { return fEntries; }
+  uint64_t GetEntries() const { return fEntries; }
 
 private:
-  int64_t fEntries;
+  uint64_t fEntries;
 
-  int32_t fEntrySize;
-  int32_t fCounter;
+  uint32_t fEntrySize;
+  uint32_t fCounter;
 
   FILE *fPileUpFile;
   uint8_t *fIndex;

@@ -49,7 +49,7 @@
 
 using namespace std;
 
-static const int kBufferSize = 1000000;
+static const uint32_t kBufferSize = 1000000;
 
 //---------------------------------------------------------------------------
 
@@ -177,10 +177,10 @@ bool DelphesSTDHEPReader::ReadEvent(DelphesFactory *factory,
 
 //---------------------------------------------------------------------------
 
-void DelphesSTDHEPReader::SkipBytes(int size)
+void DelphesSTDHEPReader::SkipBytes(uint32_t size)
 {
   int rc;
-  int rndup;
+  uint32_t rndup;
 
   rndup = size % 4;
   if(rndup > 0)
@@ -198,7 +198,7 @@ void DelphesSTDHEPReader::SkipBytes(int size)
 
 //---------------------------------------------------------------------------
 
-void DelphesSTDHEPReader::SkipArray(int elsize)
+void DelphesSTDHEPReader::SkipArray(uint32_t elsize)
 {
   uint32_t size;
   fReader[0].ReadValue(&size, 4);
@@ -314,7 +314,7 @@ void DelphesSTDHEPReader::ReadEventTable()
 void DelphesSTDHEPReader::ReadEventHeader()
 {
   bool skipNTuples = false;
-  int skipSize = 4;
+  uint32_t skipSize = 4;
 
   // version
   fReader[0].ReadString(fBuffer, 100);
@@ -422,10 +422,9 @@ void DelphesSTDHEPReader::ReadSTDHEP()
   fReader[5].ReadValue(&phepSize, 4);
   fReader[6].ReadValue(&vhepSize, 4);
 
-  if(fEventSize < 0 ||
-     fEventSize != (int)idhepSize      || fEventSize != (int)isthepSize     ||
-     (2*fEventSize) != (int)jmohepSize || (2*fEventSize) != (int)jdahepSize ||
-     (5*fEventSize) != (int)phepSize   || (4*fEventSize) != (int)vhepSize)
+  if(fEventSize != idhepSize      || fEventSize != isthepSize     ||
+     (2*fEventSize) != jmohepSize || (2*fEventSize) != jdahepSize ||
+     (5*fEventSize) != phepSize   || (4*fEventSize) != vhepSize)
   {
     throw runtime_error("Inconsistent size of arrays. File is probably corrupted.");
   }
@@ -454,6 +453,10 @@ void DelphesSTDHEPReader::ReadSTDHEP4()
 
   // Extracting the event scale
   fReader[0].ReadValue(&fScaleSize, 4);
+  if(fScaleSize > 10)
+  {
+    throw runtime_error("too many scales in event");
+  }
   for(number = 0; number < fScaleSize; ++number)
   {
     fReader[0].ReadValue(&fScale[number], 8);
@@ -504,7 +507,7 @@ void DelphesSTDHEPReader::AnalyzeParticles(DelphesFactory *factory,
   TParticlePDG *pdgParticle;
   int pdgCode;
 
-  int number;
+  uint32_t number;
   int32_t pid, status, m1, m2, d1, d2;
   double px, py, pz, e, mass;
   double x, y, z, t;

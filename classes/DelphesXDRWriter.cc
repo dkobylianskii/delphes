@@ -54,16 +54,16 @@ void DelphesXDRWriter::SetBuffer(void *buffer)
 
 //------------------------------------------------------------------------------
 
-void DelphesXDRWriter::SetOffset(int offset)
+void DelphesXDRWriter::SetOffset(uint32_t offset)
 {
   fOffset = offset;
 }
 
 //------------------------------------------------------------------------------
 
-void DelphesXDRWriter::WriteRaw(void *value, int size)
+void DelphesXDRWriter::WriteRaw(void *value, uint32_t size)
 {
-  int rndup;
+  uint32_t rndup;
 
   rndup = size % 4;
   if(rndup > 0)
@@ -79,9 +79,9 @@ void DelphesXDRWriter::WriteRaw(void *value, int size)
 
 //------------------------------------------------------------------------------
 
-void DelphesXDRWriter::WriteValue(void *value, int size)
+void DelphesXDRWriter::WriteValue(void *value, uint32_t size)
 {
-  int i;
+  uint32_t i;
   uint8_t *src, buffer[8];
 
   src = (uint8_t *)value;

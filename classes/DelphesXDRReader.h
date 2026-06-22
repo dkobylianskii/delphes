@@ -37,17 +37,17 @@ public:
 
   void SetFile(FILE *file);
   void SetBuffer(void *buffer);
-  void SetOffset(int offset);
+  void SetOffset(uint32_t offset);
 
-  void ReadRaw(void *value, int size);
-  void ReadValue(void *value, int size);
-  void ReadString(void *value, int maxSize);
+  void ReadRaw(void *value, uint32_t size);
+  void ReadValue(void *value, uint32_t size);
+  void ReadString(void *value, uint32_t maxSize);
 
 private:
   FILE *fFile;
   uint8_t *fBuffer;
 
-  int fOffset;
+  uint32_t fOffset;
 };
 
 #endif // DelphesXDRReader_h
