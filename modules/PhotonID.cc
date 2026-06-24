@@ -146,7 +146,7 @@ void PhotonID::Process()
     else
     {
       relIso = candidate->IsolationVar;
-      isolated = (relIso < 0.3);
+      isolated = (relIso < fRelIsoMax);
       //cout<<"                    Prompt!:   "<<relIso<<endl;
 
       // if isolated apply prompt formula
